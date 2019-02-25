@@ -1,5 +1,5 @@
-import filterRender from '../src/make-filter.js';
-import eventRender from '../src/make-card.js';
+import filterRender from './make-filter.js';
+import eventRender from './make-card.js';
 
 const tripForm = document.querySelector(`.trip-filter`);
 const tripDay = document.querySelector(`.trip-day__items`);
@@ -74,7 +74,7 @@ const clearBlock = (block) => {
   block.innerHTML = ``;
 };
 
-const filterLabel = document.querySelectorAll(`.trip-filter__item`);
+const filterRadio = document.getElementsByName(`filter`);
 
 
 const renderAllCards = (count) => {
@@ -90,8 +90,8 @@ function onClickHandler() {
   renderAllCards(randomNum);
 }
 
-for (let el of filterLabel) {
-  el.addEventListener(`click`, function () {
+for (let el of filterRadio) {
+  el.addEventListener(`change`, function () {
     clearBlock(tripDay);
     onClickHandler();
   });
