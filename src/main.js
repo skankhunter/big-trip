@@ -1,25 +1,10 @@
 import filterRender from './make-filter.js';
 import eventRender from './make-card.js';
+import {timesFilter, eventData} from './data.js';
 
 const tripForm = document.querySelector(`.trip-filter`);
 const tripDay = document.querySelector(`.trip-day__items`);
-const timesFilter = [
-  {
-    id: `everything`,
-    checked: true,
-    disabled: false
-  },
-  {
-    id: `future`,
-    checked: false,
-    disabled: true
-  },
-  {
-    id: `past`,
-    checked: false,
-    disabled: false
-  }
-];
+
 const dataStorage = [
   {
     title: `Taxi to Airport`,
@@ -76,18 +61,44 @@ const clearBlock = (block) => {
 
 const filterRadio = document.getElementsByName(`filter`);
 
-
-const renderAllCards = (count) => {
+const createEventData = (count, data) => {
+  const events = [];
   for (let i = 0; i < count; i++) {
-    const currentEvent = getRandomElement(dataStorage);
-    const eventCard = eventRender(currentEvent);
-    addElement(tripDay, eventCard);
+    let tempData = data.getEvent();
+    events.push({
+      city: getRandomElement(data.city),
+      title: tempData.title,
+      picture: data.picture,
+      event: tempData.event,
+      price: data.price,
+      offers: data.offer,
+      icon: tempData.icon,
+      description: data.description
+    });
   }
+
+  return events;
+};
+
+const createEventElement = (parent, data) => {
+  let currentCard = eventRender(data);
+  addElement(parent, currentCard);
+};
+
+const createAllEvents = (array) => {
+  for (const el of array) {
+    createEventElement(tripDay, el);
+  }
+};
+
+const createNewEvents = (count) => {
+  const currentDataArray = createEventData(count, eventData);
+  createAllEvents(currentDataArray);
 };
 
 function onClickHandler() {
   const randomNum = getRandomNum(randomRange);
-  renderAllCards(randomNum);
+  createNewEvents(randomNum);
 }
 
 for (let el of filterRadio) {
@@ -96,5 +107,7 @@ for (let el of filterRadio) {
     onClickHandler();
   });
 }
+
+createNewEvents(startCount);
 
 
