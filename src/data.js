@@ -74,12 +74,17 @@ const eventData = {
     }
   },
   get offer() {
-    const offersArray = [...this.offers];
-    const result = [];
+    const setOffers = [...this.offers];
+    const offers = [];
     for (let i = 0; i < getRandomNum(); i++) {
-      result.push(offersArray[getRandomNum(offersArray.length)]);
+      let randomEl = setOffers[getRandomNum(setOffers.length)];
+      if (!offers.includes(randomEl)) {
+        offers.push(randomEl);
+      }
     }
-    return result;
+    return offers.map((el) => `<li>
+                              <button class="trip-point__offer">${el}</button>
+                            </li>`).join(``);
   },
   get description() {
     const strings = [`Lorem ipsum dolor sit amet, consectetur adipiscing elit.`, `Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra.`, `Abrakadabra`];
