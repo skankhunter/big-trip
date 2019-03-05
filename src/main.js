@@ -52,7 +52,8 @@ const createEventData = (count, data) => {
       offers: data.offer,
       icon: tempData.icon,
       description: data.description,
-      date: data.dueData
+      date: data.dueData,
+      time: data.time
     });
   }
 

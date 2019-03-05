@@ -2,6 +2,15 @@ const getRandomNum = (count = 3) => {
   return Math.floor(Math.random() * count);
 };
 
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
+  }
+}
+
 const timesFilter = [
   {
     id: `everything`,
@@ -21,7 +30,7 @@ const timesFilter = [
 ];
 
 const eventData = {
-  city: [`Chamonix`, `Karaganda`, `Huevokukuevo`, `Geneva`],
+  cities: new Set([`Chamonix`, `Karaganda`, `Huevokukuevo`, `Geneva`]),
   point: new Set([
     `Taxi`,
     `Bus`,
@@ -55,12 +64,15 @@ const eventData = {
   get price() {
     return Math.floor(Math.random() * 100);
   },
+  get city() {
+    return [...this.cities];
+  },
   get picture() {
     return `//picsum.photos/300/150?r=${Math.random()}`;
   },
   getEvent() {
-    const pointsArray = [...this.point];
-    const event = pointsArray[getRandomNum(pointsArray.length)];
+    const points = [...this.point];
+    const event = points[getRandomNum(points.length)];
     const icons = this.iconPoint;
     if (icons.hasOwnProperty(event)) {
       switch (event) {
@@ -72,27 +84,30 @@ const eventData = {
           return {title: `${event} to`, icon: icons[event]};
       }
     }
+    return null;
   },
   get offer() {
     const setOffers = [...this.offers];
-    const offers = [];
-    for (let i = 0; i < getRandomNum(); i++) {
-      let randomEl = setOffers[getRandomNum(setOffers.length)];
-      if (!offers.includes(randomEl)) {
-        offers.push(randomEl);
-      }
-    }
-    return offers.map((el) => `<li>
+    shuffleArray(setOffers);
+    const randomNum = getRandomNum();
+
+    return setOffers.slice(0, randomNum).map((el) => `<li>
                               <button class="trip-point__offer">${el}</button>
                             </li>`).join(``);
   },
   get description() {
-    const strings = [`Lorem ipsum dolor sit amet, consectetur adipiscing elit.`, `Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra.`, `Abrakadabra`];
-    let result = ``;
-    for (let i = 0; i < strings.length; i++) {
-      result += strings[getRandomNum(strings.length)] + ``;
+    const descriptions = [`Lorem ipsum dolor sit amet, consectetur adipiscing elit.`, `Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra.`, `Abrakadabra`];
+    shuffleArray(descriptions);
+    return descriptions.join(` `);
+  },
+  get time() {
+    const hour = getRandomNum(24);
+    const minute = getRandomNum(59);
+    if (minute < 10) {
+      return {hour, minute: `0${minute}`};
+    } else {
+      return {hour, minute};
     }
-    return result;
   }
 };
 
