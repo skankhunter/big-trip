@@ -1,5 +1,9 @@
-const getRandomNum = (count = 3) => {
+const getRandomNum = (count) => {
   return Math.floor(Math.random() * count);
+};
+
+const getRandomElement = (array) => {
+  return array[getRandomNum(array.length)];
 };
 
 function shuffleArray(array) {
@@ -15,17 +19,20 @@ const timesFilter = [
   {
     id: `everything`,
     checked: true,
-    disabled: false
+    disabled: false,
+    count: 7
   },
   {
     id: `future`,
     checked: false,
-    disabled: true
+    disabled: true,
+    count: 0
   },
   {
     id: `past`,
     checked: false,
-    disabled: false
+    disabled: false,
+    count: 10
   }
 ];
 
@@ -89,7 +96,7 @@ const eventData = {
   get offer() {
     const setOffers = [...this.offers];
     shuffleArray(setOffers);
-    const randomNum = getRandomNum();
+    const randomNum = getRandomNum(3);
 
     return setOffers.slice(0, randomNum).map((el) => `<li>
                               <button class="trip-point__offer">${el}</button>
@@ -111,4 +118,35 @@ const eventData = {
   }
 };
 
-export {timesFilter, eventData};
+const createPointData = (count, data) => {
+  const newPoints = [];
+  for (let i = 0; i <= count; i++) {
+    let tempData = data.getEvent();
+    newPoints.push({
+      city: getRandomElement(data.city),
+      title: tempData.title,
+      picture: data.picture,
+      event: tempData.event,
+      price: data.price,
+      offers: data.offer,
+      icon: tempData.icon,
+      description: data.description,
+      date: data.dueData,
+      time: data.time
+    });
+  }
+  return newPoints;
+};
+
+const allObjects = {};
+
+const generateData = () => {
+  for (const el of timesFilter) {
+    allObjects[`${el.id}`] = createPointData(el.count, eventData);
+  }
+  return allObjects;
+};
+
+generateData();
+
+export {timesFilter, allObjects};

@@ -8,8 +8,7 @@ export default (data) => {
   </p>
   <p class="trip-point__price">${data.price}</p>
   <ul class="trip-point__offers">
-
-  ${data.offers}
+    ${data.offers}
   </ul>
   </article>`;
 };

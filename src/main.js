@@ -1,20 +1,11 @@
 import filterRender from './make-filter.js';
 import eventRender from './make-card.js';
-import {timesFilter, eventData} from './data.js';
+import {timesFilter, allObjects} from './data.js';
 
 const tripForm = document.querySelector(`.trip-filter`);
 const tripDay = document.querySelector(`.trip-day__items`);
 
-const startCount = 7;
-const randomRange = 10;
-
-function getRandomNum() {
-  return Math.floor(Math.random() * 10);
-}
-
-const getRandomElement = (array) => {
-  return array[Math.floor(Math.random() * array.length)];
-};
+const startFilter = allObjects.everything;
 
 const addElement = (parent, currentElement) => {
   parent.insertAdjacentHTML(`beforeEnd`, currentElement);
@@ -39,27 +30,6 @@ const clearBlock = (block) => {
 
 const filterRadio = document.getElementsByName(`filter`);
 
-const createEventData = (count, data) => {
-  const events = [];
-  for (let i = 0; i < count; i++) {
-    let tempData = data.getEvent();
-    events.push({
-      city: getRandomElement(data.city),
-      title: tempData.title,
-      picture: data.picture,
-      event: tempData.event,
-      price: data.price,
-      offers: data.offer,
-      icon: tempData.icon,
-      description: data.description,
-      date: data.dueData,
-      time: data.time
-    });
-  }
-
-  return events;
-};
-
 const createEventElement = (parent, data) => {
   let currentCard = eventRender(data);
   addElement(parent, currentCard);
@@ -71,23 +41,22 @@ const createAllEvents = (array) => {
   }
 };
 
-const createNewEvents = (count) => {
-  const currentDataArray = createEventData(count, eventData);
-  createAllEvents(currentDataArray);
+const getCurrentFilter = (target) => {
+  const currentId = target.getAttribute(`id`);
+  return currentId.split(`-`)[1];
 };
 
-function onClickHandler() {
-  const randomNum = getRandomNum(randomRange);
-  createNewEvents(randomNum);
-}
+const renderPoints = (target, data) => {
+  const filter = getCurrentFilter(target);
+  createAllEvents(data[`${filter}`]);
+};
 
-for (let el of filterRadio) {
-  el.addEventListener(`change`, function () {
+for (const el of filterRadio) {
+  el.addEventListener(`change`, function (evt) {
+    const target = evt.target;
     clearBlock(tripDay);
-    onClickHandler();
+    renderPoints(target, allObjects);
   });
 }
 
-createNewEvents(startCount);
-
-
+createAllEvents(startFilter);
