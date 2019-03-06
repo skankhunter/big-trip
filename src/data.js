@@ -138,15 +138,15 @@ const createPointData = (count, data) => {
   return newPoints;
 };
 
-const allObjects = {};
 
 const generateData = () => {
+  const trips = {};
   for (const el of timesFilter) {
-    allObjects[`${el.id}`] = createPointData(el.count, eventData);
+    trips[`${el.id}`] = createPointData(el.count, eventData);
   }
-  return allObjects;
+  return trips;
 };
 
-generateData();
+const tripsPoint = generateData();
 
-export {timesFilter, allObjects};
+export {timesFilter, tripsPoint};

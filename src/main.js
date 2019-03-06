@@ -1,11 +1,11 @@
 import filterRender from './make-filter.js';
 import eventRender from './make-card.js';
-import {timesFilter, allObjects} from './data.js';
+import {timesFilter, tripsPoint} from './data.js';
 
 const tripForm = document.querySelector(`.trip-filter`);
 const tripDay = document.querySelector(`.trip-day__items`);
 
-const startFilter = allObjects.everything;
+const startFilter = tripsPoint.everything;
 
 const addElement = (parent, currentElement) => {
   parent.insertAdjacentHTML(`beforeEnd`, currentElement);
@@ -55,7 +55,7 @@ for (const el of filterRadio) {
   el.addEventListener(`change`, function (evt) {
     const target = evt.target;
     clearBlock(tripDay);
-    renderPoints(target, allObjects);
+    renderPoints(target, tripsPoint);
   });
 }
 
