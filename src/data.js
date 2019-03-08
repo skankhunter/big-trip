@@ -1,20 +1,5 @@
-const getRandomNum = (count) => {
-  return Math.floor(Math.random() * count);
-};
-
-const getRandomElement = (array) => {
-  return array[getRandomNum(array.length)];
-};
-
-function shuffleArray(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    const temp = array[i];
-    array[i] = array[j];
-    array[j] = temp;
-  }
-}
-
+import {getRandomNum, shuffleArray} from './helpers/helpers';
+import {createPointData} from "./helpers/create-point";
 const timesFilter = [
   {
     id: `everything`,
@@ -78,8 +63,8 @@ const eventData = {
     return `//picsum.photos/300/150?r=${Math.random()}`;
   },
   getEvent() {
-    const points = [...this.point];
-    const event = points[getRandomNum(points.length)];
+    const events = [...this.point];
+    const event = events[getRandomNum(events.length)];
     const icons = this.iconPoint;
     if (icons.hasOwnProperty(event)) {
       switch (event) {
@@ -98,9 +83,7 @@ const eventData = {
     shuffleArray(setOffers);
     const randomNum = getRandomNum(3);
 
-    return setOffers.slice(0, randomNum).map((el) => `<li>
-                              <button class="trip-point__offer">${el}</button>
-                            </li>`).join(``);
+    return setOffers.slice(0, randomNum);
   },
   get description() {
     const descriptions = [`Lorem ipsum dolor sit amet, consectetur adipiscing elit.`, `Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra.`, `Abrakadabra`];
@@ -117,27 +100,6 @@ const eventData = {
     }
   }
 };
-
-const createPointData = (count, data) => {
-  const newPoints = [];
-  for (let i = 0; i <= count; i++) {
-    let tempData = data.getEvent();
-    newPoints.push({
-      city: getRandomElement(data.city),
-      title: tempData.title,
-      picture: data.picture,
-      event: tempData.event,
-      price: data.price,
-      offers: data.offer,
-      icon: tempData.icon,
-      description: data.description,
-      date: data.dueData,
-      time: data.time
-    });
-  }
-  return newPoints;
-};
-
 
 const generateData = () => {
   const trips = {};

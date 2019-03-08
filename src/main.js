@@ -1,6 +1,7 @@
-import filterRender from './make-filter.js';
-import eventRender from './make-card.js';
+import filterRender from './rendering/make-filter.js';
 import {timesFilter, tripsPoint} from './data.js';
+import Point from "./point/point";
+import PointEdit from "./point/point-edit";
 
 const tripForm = document.querySelector(`.trip-filter`);
 const tripDay = document.querySelector(`.trip-day__items`);
@@ -9,6 +10,10 @@ const startFilter = tripsPoint.everything;
 
 const addElement = (parent, currentElement) => {
   parent.insertAdjacentHTML(`beforeEnd`, currentElement);
+};
+
+const addEvent = (parent, currentElement) => {
+  parent.appendChild(currentElement.render());
 };
 
 const createFilterElement = (parent, id, checked, disabled) => {
@@ -31,8 +36,20 @@ const clearBlock = (block) => {
 const filterRadio = document.getElementsByName(`filter`);
 
 const createEventElement = (parent, data) => {
-  let currentCard = eventRender(data);
-  addElement(parent, currentCard);
+  const point = new Point(data);
+  const editPoint = new PointEdit(data);
+  point.onClick = () => {
+    editPoint.render();
+    tripDay.replaceChild(editPoint.element, point.element);
+    point.unrender();
+  };
+
+  editPoint.onSubmit = () => {
+    point.render();
+    tripDay.replaceChild(point.element, editPoint.element);
+    editPoint.reset();
+  };
+  addEvent(parent, point);
 };
 
 const createAllEvents = (array) => {
