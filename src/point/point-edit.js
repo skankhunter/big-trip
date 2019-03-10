@@ -1,7 +1,9 @@
 import {createElement} from "../helpers/сreate-element";
+import EventComponent from "../components/EventComponent";
 
-class PointEdit {
+class PointEdit extends EventComponent {
   constructor(data) {
+    super();
     this._city = data.city;
     this._title = data.title;
     this._picture = data.picture;
@@ -13,7 +15,6 @@ class PointEdit {
     this._date = data.dueData;
     this._time = data.time;
 
-    this._element = null;
     this._onSubmit = null;
     this._onSubmitButtonClick = this._onSubmitButtonClick.bind(this);
   }
@@ -26,10 +27,6 @@ class PointEdit {
 
   set onSubmit(fn) {
     this._onSubmit = fn;
-  }
-
-  get element() {
-    return this._element;
   }
 
   get template() {
@@ -141,17 +138,6 @@ class PointEdit {
             </form>
           </article>
 `;
-  }
-
-  render() {
-    this._element = createElement(this.template);
-    this.bind();
-    return this._element;
-  }
-
-  reset() {
-    this.unbind();
-    this._element = null;
   }
 
   bind() {

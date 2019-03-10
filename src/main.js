@@ -47,7 +47,7 @@ const createEventElement = (parent, data) => {
   editPoint.onSubmit = () => {
     point.render();
     tripDay.replaceChild(point.element, editPoint.element);
-    editPoint.reset();
+    editPoint.unrender();
   };
   addEvent(parent, point);
 };

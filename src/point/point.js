@@ -1,7 +1,9 @@
-import {createElement} from "../helpers/сreate-element";
 
-class Point {
+import EventComponent from "../components/EventComponent";
+
+class Point extends EventComponent {
   constructor(data) {
+    super();
     this._city = data.city;
     this._title = data.title;
     this._picture = data.picture;
@@ -13,11 +15,6 @@ class Point {
     this._date = data.dueData;
     this._time = data.time;
 
-    this._element = null;
-    this._state = {
-      isEdit: false
-    };
-
     this._onClickHandler = this._onClickHandler.bind(this);
   }
 
@@ -25,10 +22,6 @@ class Point {
     if (typeof this._onClick === `function`) {
       this._onClick();
     }
-  }
-
-  get element() {
-    return this._element;
   }
 
   set onClick(fn) {
@@ -59,19 +52,8 @@ class Point {
     this._element.addEventListener(`click`, this._onClickHandler);
   }
 
-  render() {
-    this._element = createElement(this.template);
-    this.bind();
-    return this._element;
-  }
-
   unbind() {
     this._element.removeEventListener(`click`, this._onClickHandler);
-  }
-
-  unrender() {
-    this.unbind();
-    this._element = null;
   }
 }
 
