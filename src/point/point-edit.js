@@ -15,11 +15,13 @@ class PointEdit {
 
     this._element = null;
     this._onSubmit = null;
+    this._onSubmitButtonClick = this._onSubmitButtonClick.bind(this);
   }
 
-  _onSubmitButtonClick(evt) {
-    evt.preventDefault();
-    typeof this._onSubmit === `function` && this._onSubmit();
+  _onSubmitButtonClick() {
+    if (typeof this._onSubmit === `function`) {
+      this._onSubmit();
+    }
   }
 
   set onSubmit(fn) {
@@ -153,11 +155,11 @@ class PointEdit {
   }
 
   bind() {
-    this._element.addEventListener(`submit`, this._onSubmitButtonClick.bind(this));
+    this._element.addEventListener(`submit`, this._onSubmitButtonClick);
   }
 
   unbind() {
-    // Удаление обработчиков
+    this._element.removeEventListener(`submit`, this._onSubmitButtonClick);
   }
 }
 

@@ -17,10 +17,14 @@ class Point {
     this._state = {
       isEdit: false
     };
+
+    this._onClickHandler = this._onClickHandler.bind(this);
   }
 
-  _onClickHandeler() {
-    typeof this._onClick === `function` && this._onClick();
+  _onClickHandler() {
+    if (typeof this._onClick === `function`) {
+      this._onClick();
+    }
   }
 
   get element() {
@@ -52,7 +56,7 @@ class Point {
   }
 
   bind() {
-    this._element.addEventListener(`click`, this._onClickHandeler.bind(this));
+    this._element.addEventListener(`click`, this._onClickHandler);
   }
 
   render() {
@@ -62,7 +66,7 @@ class Point {
   }
 
   unbind() {
-    // Удаление обработчиков
+    this._element.removeEventListener(`click`, this._onClickHandler);
   }
 
   unrender() {
