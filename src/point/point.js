@@ -49,11 +49,21 @@ class Point extends EventComponent {
   }
 
   bind() {
-    this._element.addEventListener(`click`, this._onClickHandler);
+    this._element.
+      addEventListener(`click`, this._onClickHandler);
   }
 
   unbind() {
     this._element.removeEventListener(`click`, this._onClickHandler);
+  }
+
+  update(data) {
+    this._title = data.title;
+    this._city = data.city;
+    this._price = data._price;
+    this._icon = data._icon;
+    this._time = data._time;
+    this._offers = data._offers;
   }
 }
 

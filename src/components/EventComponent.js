@@ -32,6 +32,8 @@ class EventComponent {
   bind() {}
 
   unbind() {}
+
+  update() {}
 }
 
 export default EventComponent;

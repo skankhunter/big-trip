@@ -48,11 +48,18 @@ const eventData = {
     'Restaurant': `🍴`
   },
   dueData: Date.now() + 1 + Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000,
-  offers: new Set([
-    `Add luggage`,
-    `Switch to comfort class`,
-    `Add meal`,
-    `Choose seats`]),
+  offers: {
+    'Taxi': [`Add luggage`, `35345`],
+    'Bus': [`qfgfd`, `Switch to comfort class`],
+    'Train': [`Afglnlf`, `Switch to comfort class`],
+    'Ship': [`dfghncv`, `fghdfgh`],
+    'Transport': [`Add luggage`, `123`],
+    'Drive': [`xcvbxcvb`, `xvbxcvb`],
+    'Flight': [`Add luggage`, `Switch to comfort class`],
+    'Check-in': [`Add meal`, `Add alcohol`],
+    'Sightseeing': [`Add meal`, `Add alcohol`],
+    'Restaurant': [`Add meal`, `Add alcohol`]
+  },
   get price() {
     return Math.floor(Math.random() * 100);
   },
@@ -61,6 +68,9 @@ const eventData = {
   },
   get picture() {
     return `//picsum.photos/300/150?r=${Math.random()}`;
+  },
+  get offerPrice() {
+    return Math.floor(Math.random() * 30);
   },
   getEvent() {
     const events = [...this.point];
@@ -71,9 +81,9 @@ const eventData = {
         case `Check-in`:
         case `Sightseeing`:
         case `Restaurant`:
-          return {title: `${event} into a`, icon: icons[event]};
+          return {title: `${event} into a`, icon: icons[event], offer: this.offers[event]};
         default:
-          return {title: `${event} to`, icon: icons[event]};
+          return {title: `${event} to`, icon: icons[event], offer: this.offers[event]};
       }
     }
     return null;

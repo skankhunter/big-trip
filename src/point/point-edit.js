@@ -1,4 +1,3 @@
-import {createElement} from "../helpers/сreate-element";
 import EventComponent from "../components/EventComponent";
 
 class PointEdit extends EventComponent {
@@ -7,16 +6,36 @@ class PointEdit extends EventComponent {
     this._city = data.city;
     this._title = data.title;
     this._picture = data.picture;
-    this._event = data.event;
     this._price = data.price;
     this._offers = data.offers;
+    this._offerPrice = data.offerPrice;
     this._icon = data.icon;
     this._description = data.description;
     this._date = data.dueData;
     this._time = data.time;
 
+    this._state.isFavorite = false;
+
     this._onSubmit = null;
     this._onSubmitButtonClick = this._onSubmitButtonClick.bind(this);
+    this._onFavoriteChange = this._onFavoriteChange.bind(this);
+    this._onOfferChange = this._onOfferChange.bind(this);
+  }
+
+  _onFavoriteChange() {
+    this._state.isFavorite = !this._state.isFavorite;
+  }
+
+  _onOfferChange(e) {
+    if (e.target.checked === true) {
+      this._price += Number(e.target.value);
+    } else {
+      this._price -= Number(e.target.value);
+    }
+  }
+
+  _partialUpdate() {
+    this._element.innerHTML = this.template;
   }
 
   _onSubmitButtonClick() {
@@ -55,7 +74,7 @@ class PointEdit extends EventComponent {
                     <input class="travel-way__select-input visually-hidden" type="radio" id="travel-way-train" name="travel-way" value="train">
                     <label class="travel-way__select-label" for="travel-way-train">🚂 train</label>
         
-                    <input class="travel-way__select-input visually-hidden" type="radio" id="travel-way-flight" name="travel-way" value="train" checked>
+                    <input class="travel-way__select-input visually-hidden" type="radio" id="travel-way-flight" name="travel-way" value="flight">
                     <label class="travel-way__select-label" for="travel-way-flight">✈️ flight</label>
                   </div>
         
@@ -71,18 +90,19 @@ class PointEdit extends EventComponent {
         
               <div class="point__destination-wrap">
                 <label class="point__destination-label" for="destination">${this._title}</label>
-                <input class="point__destination-input" list="destination-select" id="destination" value="Chamonix" name="destination">
+                <input class="point__destination-input" list="destination-select" id="destination" value="${this._city}" name="destination">
                 <datalist id="destination-select">
                   <option value="airport"></option>
                   <option value="Geneva"></option>
                   <option value="Chamonix"></option>
-                  <option value="hotel"></option>
+                  <option value="Karaganda"></option>
+                  <option value="Huevokukuevo"></option>
                 </datalist>
               </div>
         
               <label class="point__time">
                 choose time
-                <input class="point__input" type="text" value="00:00 — 00:00" name="time" placeholder="00:00 — 00:00">
+                <input class="point__input" type="text" value="" name="time" placeholder="00:00 — 00:00">
               </label>
         
               <label class="point__price">
@@ -97,7 +117,7 @@ class PointEdit extends EventComponent {
               </div>
         
               <div class="paint__favorite-wrap">
-                <input type="checkbox" class="point__favorite-input visually-hidden" id="favorite" name="favorite">
+                <input type="checkbox" class="point__favorite-input visually-hidden" id="favorite" name="favorite" ${this._state.isFavorite ? `checked` : ``}>
                 <label class="point__favorite" for="favorite">favorite</label>
               </div>
             </header>
@@ -112,9 +132,9 @@ class PointEdit extends EventComponent {
                                  type="checkbox" 
                                  id="${offer.split(` `).join(`-`).toLocaleLowerCase()}" 
                                  name="offer" 
-                                 value="${offer.split(``).join(`-`).toLocaleLowerCase()}">
-                          <label for="add-luggage" class="point__offers-label">
-                            <span class="point__offer-service">${offer}</span> + €<span class="point__offer-price"></span>
+                                 value="${this._offerPrice}">
+                          <label for="${offer.split(` `).join(`-`).toLocaleLowerCase()}" class="point__offers-label">
+                            <span class="point__offer-service">${offer}</span> + €<span class="point__offer-price">${this._offerPrice}</span>
                           </label>
                          `.trim()))).join(``)}
                   </div>
@@ -136,16 +156,36 @@ class PointEdit extends EventComponent {
                 <input type="hidden" class="point__total-price" name="total-price" value="">
               </section>
             </form>
-          </article>
-`;
+          </article>`;
   }
 
   bind() {
     this._element.addEventListener(`submit`, this._onSubmitButtonClick);
+
+    this._element.querySelector(`#favorite`)
+      .addEventListener(`change`, this._onFavoriteChange);
+
+    const elems = this._element.querySelectorAll(`.point__offers-input`);
+
+    for (let i = 0; i < elems.length; i++) {
+      elems[i].addEventListener(`change`, this._onOfferChange);
+    }
   }
 
   unbind() {
     this._element.removeEventListener(`submit`, this._onSubmitButtonClick);
+
+    this._element.querySelector(`.point__offers-input`)
+      .removeEventListener(`change`, this._onOfferChange);
+  }
+
+  update(data) {
+    this._title = data.title;
+    this._city = data.city;
+    this._price = data._price;
+    this._icon = data._icon;
+    this._time = data._time;
+    this._offers = data._offers;
   }
 }
 
