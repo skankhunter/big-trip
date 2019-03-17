@@ -13,6 +13,7 @@ class PointEdit extends EventComponent {
     this._description = data.description;
     this._date = data.dueData;
     this._time = data.time;
+    this._icons = data.icons;
 
     this._state.isFavorite = false;
 
@@ -20,10 +21,56 @@ class PointEdit extends EventComponent {
     this._onSubmitButtonClick = this._onSubmitButtonClick.bind(this);
     this._onFavoriteChange = this._onFavoriteChange.bind(this);
     this._onOfferChange = this._onOfferChange.bind(this);
+    this._onIconChange = this._onIconChange.bind(this);
+  }
+
+  _processForm(formData) {
+    const entry = {
+      title: ``,
+      price: ``,
+      city: ``,
+      isFavorite: false,
+      time: ``,
+      offers: [],
+      icon: ``
+    };
+
+    const pointEditMapper = PointEdit.createMapper(entry);
+
+    for (const pair of formData.entries()) {
+      const [property, value] = pair;
+      pointEditMapper[property] && pointEditMapper[property](value); // TODO: need to understand how it's work
+    }
+
+    return entry;
+  }
+
+  _onSubmitButtonClick(e) {
+    e.preventDefault();
+
+    const formData = new FormData(this._element.querySelector(`.trip-day__items`));
+    const newData = this._processForm(formData);
+    if (typeof this._onSubmit === `function`) {
+      this._onSubmit();
+    }
+
+    this.update(newData);
   }
 
   _onFavoriteChange() {
     this._state.isFavorite = !this._state.isFavorite;
+  }
+
+  _onIconChange(e) {
+    const icons = this._icons;
+    for (let prop in icons) {
+      if (prop.toLocaleLowerCase() === e.target.value) {
+        this._icon = icons[prop];
+      }
+    }
+    this.unbind();
+    this._partialUpdate();
+    this.bind();
   }
 
   _onOfferChange(e) {
@@ -35,13 +82,7 @@ class PointEdit extends EventComponent {
   }
 
   _partialUpdate() {
-    this._element.innerHTML = this.template;
-  }
-
-  _onSubmitButtonClick() {
-    if (typeof this._onSubmit === `function`) {
-      this._onSubmit();
-    }
+    this._element.innerHTML = this.template; // TODO: change HTML by the right way for binding
   }
 
   set onSubmit(fn) {
@@ -159,17 +200,36 @@ class PointEdit extends EventComponent {
           </article>`;
   }
 
+  _createCycleListeners() {
+    const offersIpnut = this._element.querySelectorAll(`.point__offers-input`);
+    for (let i = 0; i < offersIpnut.length; i++) {
+      offersIpnut[i].addEventListener(`change`, this._onOfferChange);
+    }
+
+    const travelSelect = this._element.querySelectorAll(`.travel-way__select-input`);
+    for (let i = 0; i < travelSelect.length; i++) {
+      travelSelect[i].addEventListener(`click`, this._onIconChange);
+    }
+  }
+
+  _removeCycleListeners() {
+    const offersIpnut = this._element.querySelectorAll(`.point__offers-input`);
+    for (let i = 0; i < offersIpnut.length; i++) {
+      offersIpnut[i].removeEventListener(`change`, this._onOfferChange);
+    }
+
+    const travelSelect = this._element.querySelectorAll(`.travel-way__select-input`);
+    for (let i = 0; i < travelSelect.length; i++) {
+      travelSelect[i].removeEventListener(`click`, this._onIconChange);
+    }
+  }
+
   bind() {
     this._element.addEventListener(`submit`, this._onSubmitButtonClick);
 
     this._element.querySelector(`#favorite`)
       .addEventListener(`change`, this._onFavoriteChange);
-
-    const elems = this._element.querySelectorAll(`.point__offers-input`);
-
-    for (let i = 0; i < elems.length; i++) {
-      elems[i].addEventListener(`change`, this._onOfferChange);
-    }
+    this._createCycleListeners();
   }
 
   unbind() {
@@ -177,15 +237,29 @@ class PointEdit extends EventComponent {
 
     this._element.querySelector(`.point__offers-input`)
       .removeEventListener(`change`, this._onOfferChange);
+    this._removeCycleListeners();
   }
 
   update(data) {
     this._title = data.title;
     this._city = data.city;
-    this._price = data._price;
-    this._icon = data._icon;
-    this._time = data._time;
-    this._offers = data._offers;
+    this._price = data.price;
+    this._icon = data.icon;
+    this._time = data.time;
+    this._offers = data.offers;
+    this._state.isFavorite = data.isFavorite;
+  }
+
+  static createMapper(target) {
+    return {
+      text: (value) => target.title = value,
+      price: (value) => target.price = value,
+      city: (value) => target.city = value,
+      isFavorite: () => target.isFavorite = true,
+      time: (value) => target.time = value,
+      offers: (value) => target.offers,
+      icon: (value) => target.icon = value,
+    };
   }
 }
 

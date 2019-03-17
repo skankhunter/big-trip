@@ -14,7 +14,8 @@ export const createPointData = (count, data) => {
       icon: tempData.icon,
       description: data.description,
       date: data.dueData,
-      time: data.time
+      time: data.time,
+      icons: data.iconPoint,
     });
   }
   return newPoints;
