@@ -30,14 +30,14 @@ class Point extends EventComponent {
 
   get template() {
     return `
-        <article class="trip-point">
+       <article class="trip-point">
           <i class="trip-icon">${this._icon}</i>
           <h3 class="trip-point__title">${this._title} ${this._city}</h3>
           <p class="trip-point__schedule">
-            <span class="trip-point__timetable">${this._time.hour}:${this._time.minute}&nbsp;&mdash; ${this._time.hour + 1}:00</span>
-            <span class="trip-point__duration">${this._time.hour + 1 - this._time.hour}h ${this._time.minute}m</span>
+            <span class="trip-point__timetable">${this._time}</span>
+            <span class="trip-point__duration">${this._time}m</span>
           </p>
-          <p class="trip-point__price">${this._price}</p>
+          <p class="trip-point__price">&euro;&nbsp;${this._price}</p>
           <ul class="trip-point__offers">
              ${(Array.from(this._offers).map((offer) => (`
                       <li>
@@ -60,10 +60,10 @@ class Point extends EventComponent {
   update(data) {
     this._title = data.title;
     this._city = data.city;
-    this._price = data._price;
-    this._icon = data._icon;
-    this._time = data._time;
-    this._offers = data._offers;
+    this._price = data.price;
+    this._icon = data.icon;
+    this._time = data.time;
+    this._offers = data.offers;
   }
 }
 

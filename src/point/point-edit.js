@@ -1,4 +1,5 @@
 import EventComponent from "../components/EventComponent";
+import {createElement} from "../helpers/сreate-element";
 
 class PointEdit extends EventComponent {
   constructor(data) {
@@ -21,7 +22,7 @@ class PointEdit extends EventComponent {
     this._onSubmitButtonClick = this._onSubmitButtonClick.bind(this);
     this._onFavoriteChange = this._onFavoriteChange.bind(this);
     this._onOfferChange = this._onOfferChange.bind(this);
-    this._onIconChange = this._onIconChange.bind(this);
+    this._onEventChange = this._onEventChange .bind(this);
   }
 
   _processForm(formData) {
@@ -30,7 +31,7 @@ class PointEdit extends EventComponent {
       price: ``,
       city: ``,
       isFavorite: false,
-      time: ``,
+      time: `10:00`,
       offers: [],
       icon: ``
     };
@@ -39,7 +40,9 @@ class PointEdit extends EventComponent {
 
     for (const pair of formData.entries()) {
       const [property, value] = pair;
-      pointEditMapper[property] && pointEditMapper[property](value); // TODO: need to understand how it's work
+      if (pointEditMapper[property]) {
+        pointEditMapper[property](value);
+      }
     }
 
     return entry;
@@ -48,10 +51,10 @@ class PointEdit extends EventComponent {
   _onSubmitButtonClick(e) {
     e.preventDefault();
 
-    const formData = new FormData(this._element.querySelector(`.trip-day__items`));
+    const formData = new FormData(this._element.querySelector(`.trip-day__items form`));
     const newData = this._processForm(formData);
     if (typeof this._onSubmit === `function`) {
-      this._onSubmit();
+      this._onSubmit(newData);
     }
 
     this.update(newData);
@@ -61,11 +64,12 @@ class PointEdit extends EventComponent {
     this._state.isFavorite = !this._state.isFavorite;
   }
 
-  _onIconChange(e) {
+  _onEventChange(e) {
     const icons = this._icons;
     for (let prop in icons) {
       if (prop.toLocaleLowerCase() === e.target.value) {
         this._icon = icons[prop];
+        this._title = e.target.value;
       }
     }
     this.unbind();
@@ -82,7 +86,11 @@ class PointEdit extends EventComponent {
   }
 
   _partialUpdate() {
-    this._element.innerHTML = this.template; // TODO: change HTML by the right way for binding
+    const currentElement = createElement(this.template);
+    const a = document.createElement(`div`);
+    let b = a.innerHTML;
+    b = currentElement;
+    this._element.innerHTML = b.firstElementChild.outerHTML;
   }
 
   set onSubmit(fn) {
@@ -123,7 +131,7 @@ class PointEdit extends EventComponent {
                     <input class="travel-way__select-input visually-hidden" type="radio" id="travel-way-check-in" name="travel-way" value="check-in">
                     <label class="travel-way__select-label" for="travel-way-check-in">🏨 check-in</label>
         
-                    <input class="travel-way__select-input visually-hidden" type="radio" id="travel-way-sightseeing" name="travel-way" value="sight-seeing">
+                    <input class="travel-way__select-input visually-hidden" type="radio" id="travel-way-sightseeing" name="travel-way" value="sightseeing">
                     <label class="travel-way__select-label" for="travel-way-sightseeing">🏛 sightseeing</label>
                   </div>
                 </div>
@@ -208,7 +216,7 @@ class PointEdit extends EventComponent {
 
     const travelSelect = this._element.querySelectorAll(`.travel-way__select-input`);
     for (let i = 0; i < travelSelect.length; i++) {
-      travelSelect[i].addEventListener(`click`, this._onIconChange);
+      travelSelect[i].addEventListener(`click`, this._onEventChange);
     }
   }
 
@@ -220,7 +228,7 @@ class PointEdit extends EventComponent {
 
     const travelSelect = this._element.querySelectorAll(`.travel-way__select-input`);
     for (let i = 0; i < travelSelect.length; i++) {
-      travelSelect[i].removeEventListener(`click`, this._onIconChange);
+      travelSelect[i].removeEventListener(`click`, this._onEventChange);
     }
   }
 
@@ -252,13 +260,25 @@ class PointEdit extends EventComponent {
 
   static createMapper(target) {
     return {
-      text: (value) => target.title = value,
-      price: (value) => target.price = value,
-      city: (value) => target.city = value,
-      isFavorite: () => target.isFavorite = true,
-      time: (value) => target.time = value,
-      offers: (value) => target.offers,
-      icon: (value) => target.icon = value,
+
+      price: (value) => {
+        target.price = value;
+      },
+      destination: (value) => {
+        target.city = value;
+      },
+      favorite: () => {
+        target.isFavorite = true;
+      },
+      time: (value) => {
+        target.time = value;
+      },
+      offer: (value) => target.offers.push(value),
+      //тут учесть массив и валуе (число)
+      //к этому офферсу пушить валуе
+      icon: (value) => {
+        target.icon = value;
+      }
     };
   }
 }

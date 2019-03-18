@@ -44,7 +44,16 @@ const createEventElement = (parent, data) => {
     point.unrender();
   };
 
-  editPoint.onSubmit = () => {
+  editPoint.onSubmit = (newObject) => {
+    point.title = newObject.title;
+    point.city = newObject.city;
+    point.price = newObject.price;
+    point.icon = newObject.icon;
+    point.time = newObject.time;
+    point.offers = newObject.offers;
+    point.isFavorite = newObject.isFavorite;
+
+    point.update(data);
     point.render();
     tripDay.replaceChild(point.element, editPoint.element);
     editPoint.unrender();

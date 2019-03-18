@@ -100,15 +100,7 @@ const eventData = {
     shuffleArray(descriptions);
     return descriptions.join(` `);
   },
-  get time() {
-    const hour = getRandomNum(24);
-    const minute = getRandomNum(59);
-    if (minute < 10) {
-      return {hour, minute: `0${minute}`};
-    } else {
-      return {hour, minute};
-    }
-  }
+  time: `12:00`,
 };
 
 const generateData = () => {
