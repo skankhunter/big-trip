@@ -16,6 +16,7 @@ export const createPointData = (count, data) => {
       date: data.dueData,
       time: data.time,
       icons: data.iconPoint,
+      offersList: data.offers
     });
   }
   return newPoints;

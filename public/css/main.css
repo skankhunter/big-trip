@@ -295,6 +295,7 @@ input[type=radio]:checked + .trip-sorting__item {
   position: relative;
   margin-left: 17px;
   cursor: pointer;
+  text-transform: capitalize;
 }
 
 .trip-point__title {
@@ -431,6 +432,7 @@ input[type=radio]:checked + .trip-sorting__item {
   max-width: 100px;
   color: #999999;
   text-overflow: ellipsis;
+  text-transform: capitalize;
 }
 .point__destination-input {
   border: 0;

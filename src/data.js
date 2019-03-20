@@ -24,41 +24,41 @@ const timesFilter = [
 const eventData = {
   cities: new Set([`Chamonix`, `Karaganda`, `Huevokukuevo`, `Geneva`]),
   point: new Set([
-    `Taxi`,
-    `Bus`,
-    `Train`,
-    `Ship`,
-    `Transport`,
-    `Drive`,
-    `Flight`,
-    `Check-in`,
-    `Sightseeing`,
-    `Restaurant`
+    `taxi`,
+    `bus`,
+    `train`,
+    `ship`,
+    `transport`,
+    `drive`,
+    `flight`,
+    `check-in`,
+    `sightseeing`,
+    `restaurant`
   ]),
   iconPoint: {
-    'Taxi': `🚕`,
-    'Bus': `🚌`,
-    'Train': `🚂`,
-    'Ship': `🛳️`,
-    'Transport': `🚊`,
-    'Drive': `🚗`,
-    'Flight': `✈`,
-    'Check-in': `🏨`,
-    'Sightseeing': `🏛`,
-    'Restaurant': `🍴`
+    'taxi': `🚕`,
+    'bus': `🚌`,
+    'train': `🚂`,
+    'ship': `🛳️`,
+    'transport': `🚊`,
+    'drive': `🚗`,
+    'flight': `✈`,
+    'check-in': `🏨`,
+    'sightseeing': `🏛`,
+    'restaurant': `🍴`
   },
   dueData: Date.now() + 1 + Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000,
   offers: {
-    'Taxi': [`Add luggage`, `35345`],
-    'Bus': [`qfgfd`, `Switch to comfort class`],
-    'Train': [`Afglnlf`, `Switch to comfort class`],
-    'Ship': [`dfghncv`, `fghdfgh`],
-    'Transport': [`Add luggage`, `123`],
-    'Drive': [`xcvbxcvb`, `xvbxcvb`],
-    'Flight': [`Add luggage`, `Switch to comfort class`],
-    'Check-in': [`Add meal`, `Add alcohol`],
-    'Sightseeing': [`Add meal`, `Add alcohol`],
-    'Restaurant': [`Add meal`, `Add alcohol`]
+    'taxi': [{label: `Add luggage`, checked: false, cost: `23`}, {label: `35345`, checked: false, cost: `23`}],
+    'tus': [{label: `Add 432`, checked: false, cost: `23`}, {label: `bxcvbxc`, checked: false, cost: `23`}],
+    'train': [{label: `Add 123`, checked: false, cost: `23`}, {label: `asdfasdf`, checked: false, cost: `23`}],
+    'ship': [{label: `Adasdfasd luggage`, checked: false, cost: `23`}, {label: `234235`, checked: false, cost: `23`}],
+    'transport': [{label: `Add xcvbcxn`, checked: false, cost: `23`}, {label: `adsfgdfh`, checked: false, cost: `23`}],
+    'drive': [{label: `Add xcvnxcn`, checked: false, cost: `23`}, {label: `nbvmcbnm`, checked: false, cost: `23`}],
+    'flight': [{label: `Add luggage`, checked: false, cost: `23`}, {label: `35345`, checked: false, cost: `23`}],
+    'check-in': [{label: `Add luggage`, checked: false, cost: `23`}, {label: `35345`, checked: false, cost: `23`}],
+    'sightseeing': [{label: `Add luggage`, checked: false, cost: `23`}, {label: `35345`, checked: false, cost: `23`}],
+    'restaurant': [{label: `Add luggage`, checked: false, cost: `23`}, {label: `35345`, checked: false, cost: `23`}]
   },
   get price() {
     return Math.floor(Math.random() * 100);
@@ -78,9 +78,9 @@ const eventData = {
     const icons = this.iconPoint;
     if (icons.hasOwnProperty(event)) {
       switch (event) {
-        case `Check-in`:
-        case `Sightseeing`:
-        case `Restaurant`:
+        case `check-in`:
+        case `sightseeing`:
+        case `restaurant`:
           return {title: `${event} into a`, icon: icons[event], offer: this.offers[event]};
         default:
           return {title: `${event} to`, icon: icons[event], offer: this.offers[event]};
@@ -88,15 +88,12 @@ const eventData = {
     }
     return null;
   },
-  get offer() {
-    const setOffers = [...this.offers];
-    shuffleArray(setOffers);
-    const randomNum = getRandomNum(3);
-
-    return setOffers.slice(0, randomNum);
-  },
   get description() {
-    const descriptions = [`Lorem ipsum dolor sit amet, consectetur adipiscing elit.`, `Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra.`, `Abrakadabra`];
+    const descriptions = [
+      `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
+      `Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra.`,
+      `Abrakadabra`
+    ];
     shuffleArray(descriptions);
     return descriptions.join(` `);
   },

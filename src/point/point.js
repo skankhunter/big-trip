@@ -41,7 +41,7 @@ class Point extends EventComponent {
           <ul class="trip-point__offers">
              ${(Array.from(this._offers).map((offer) => (`
                       <li>
-                         <button class="trip-point__offer">${offer}</button>
+                         <button class="trip-point__offer">${offer.label}</button>
                       </li>`.trim()))).join(``)}
           </ul>
       </article>
