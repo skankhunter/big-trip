@@ -16,6 +16,7 @@ class PointEdit extends EventComponent {
     this._date = data.dueData;
     this._time = data.time;
     this._icons = data.icons;
+    this._startPrice = data.price;
 
     this._state.isFavorite = false;
     this._state.checked = false;
@@ -98,6 +99,7 @@ class PointEdit extends EventComponent {
       }
     }
 
+    this._price = this._startPrice;
     this._offers = offers[e.target.value];
 
     this._partialUpdate();
@@ -105,6 +107,7 @@ class PointEdit extends EventComponent {
   }
 
   _onOfferChange(e) {
+    this._price = Number(this._price);
     if (e.target.checked === true) {
       this._price += Number(e.target.value);
     } else {
@@ -118,10 +121,10 @@ class PointEdit extends EventComponent {
 
   _partialUpdate() {
     const currentElement = createElement(this.template);
-    const a = document.createElement(`div`);
-    let b = a.innerHTML;
-    b = currentElement;
-    this._element.innerHTML = b.firstElementChild.outerHTML;
+    const container = document.createElement(`div`);
+    let fieldContainer = container.innerHTML;
+    fieldContainer = currentElement;
+    this._element.innerHTML = fieldContainer.firstElementChild.outerHTML;
   }
 
   set onSubmit(fn) {
@@ -188,7 +191,7 @@ class PointEdit extends EventComponent {
               <label class="point__price">
                 write price
                 <span class="point__price-currency">€</span>
-                <input class="point__input" type="text" value="${this._price}" name="price">
+                <input class="point__input" type="text" value="${this._price}" name="price" readonly>
               </label>
         
               <div class="point__buttons">
@@ -212,7 +215,8 @@ class PointEdit extends EventComponent {
                                  type="checkbox" 
                                  id="${offer.label.split(` `).join(`-`).toLocaleLowerCase()}" 
                                  name="offer" 
-                                 value="${offer.cost}" ${offer.checked ? `checked` : ``}>
+                                 value="${offer.cost}" ${offer.checked ? `checked` : ``}
+                                  >
                           <label for="${offer.label.split(` `).join(`-`).toLocaleLowerCase()}" class="point__offers-label">
                             <span class="point__offer-service">${offer.label}</span> + €<span class="point__offer-price">${offer.cost}</span>
                           </label>
@@ -307,10 +311,7 @@ class PointEdit extends EventComponent {
       },
       icon: (value) => {
         target.icon = value;
-      },
-      'travel-way': (value) => {
-        target.title = value;
-      },
+      }
     };
   }
 }

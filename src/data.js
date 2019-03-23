@@ -50,15 +50,15 @@ const eventData = {
   dueData: Date.now() + 1 + Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000,
   offers: {
     'taxi': [{label: `Add luggage`, checked: false, cost: `23`}, {label: `35345`, checked: false, cost: `23`}],
-    'tus': [{label: `Add 432`, checked: false, cost: `23`}, {label: `bxcvbxc`, checked: false, cost: `23`}],
+    'bus': [{label: `test`, checked: false, cost: `23`}, {label: `test`, checked: false, cost: `23`}],
     'train': [{label: `Add 123`, checked: false, cost: `23`}, {label: `asdfasdf`, checked: false, cost: `23`}],
     'ship': [{label: `Adasdfasd luggage`, checked: false, cost: `23`}, {label: `234235`, checked: false, cost: `23`}],
     'transport': [{label: `Add xcvbcxn`, checked: false, cost: `23`}, {label: `adsfgdfh`, checked: false, cost: `23`}],
     'drive': [{label: `Add xcvnxcn`, checked: false, cost: `23`}, {label: `nbvmcbnm`, checked: false, cost: `23`}],
-    'flight': [{label: `Add luggage`, checked: false, cost: `23`}, {label: `35345`, checked: false, cost: `23`}],
+    'flight': [{label: `Add something`, checked: false, cost: `23`}, {label: `vip`, checked: false, cost: `23`}],
     'check-in': [{label: `Add luggage`, checked: false, cost: `23`}, {label: `35345`, checked: false, cost: `23`}],
     'sightseeing': [{label: `Add luggage`, checked: false, cost: `23`}, {label: `35345`, checked: false, cost: `23`}],
-    'restaurant': [{label: `Add luggage`, checked: false, cost: `23`}, {label: `35345`, checked: false, cost: `23`}]
+    'restaurant': [{label: `Add desert`, checked: false, cost: `23`}, {label: `35345`, checked: false, cost: `23`}]
   },
   get price() {
     return Math.floor(Math.random() * 100);
