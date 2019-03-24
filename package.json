@@ -19,6 +19,10 @@
     "webpack-cli": "3.2.3",
     "webpack-dev-server": "3.2.0"
   },
+  "dependencies": {
+    "flatpickr": "^4.5.7",
+    "moment": "^2.24.0"
+  },
   "engines": {
     "node": "10"
   }

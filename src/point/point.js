@@ -1,5 +1,5 @@
-
 import EventComponent from "../components/EventComponent";
+import moment from 'moment';
 
 class Point extends EventComponent {
   constructor(data) {

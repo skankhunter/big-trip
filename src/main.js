@@ -53,19 +53,26 @@ const createEventElement = (parent, data) => {
     point.offers = newObject.offers;
     point.isFavorite = newObject.isFavorite;
 
-    point.update(data);
+    point.update(point);
     point.render();
     tripDay.replaceChild(point.element, editPoint.element);
     editPoint.unrender();
   };
 
-  document.addEventListener(`keydown`, function (e) {
-    if (e.keyCode === 27) {
-      point.render();
-      tripDay.replaceChild(point.element, editPoint.element);
-      editPoint.unrender();
-    }
-  });
+  editPoint.onEsc = (initialObject) => {
+    point.price = initialObject.price;
+    editPoint.update(data);
+    point.render();
+    tripDay.replaceChild(point.element, editPoint.element);
+    editPoint.unrender();
+  };
+
+  editPoint.onReset = () => {
+    point.render();
+    tripDay.replaceChild(point.element, editPoint.element);
+    editPoint.unrender();
+  };
+
   addEvent(parent, point);
 };
 
