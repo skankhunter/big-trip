@@ -4,6 +4,7 @@ import moment from 'moment';
 class Point extends EventComponent {
   constructor(data) {
     super();
+    this._token = data.token;
     this._city = data.city;
     this._title = data.title;
     this._picture = data.picture;
@@ -14,6 +15,8 @@ class Point extends EventComponent {
     this._description = data.description;
     this._date = data.dueData;
     this._time = data.time;
+    this._timeStart = data.timeStart;
+    this._timeStop = data.timeStop;
 
     this._onClickHandler = this._onClickHandler.bind(this);
   }
@@ -35,7 +38,7 @@ class Point extends EventComponent {
           <h3 class="trip-point__title">${this._title} ${this._city}</h3>
           <p class="trip-point__schedule">
             <span class="trip-point__timetable">${this._time}</span>
-            <span class="trip-point__duration">${this._time}m</span>
+            <span class="trip-point__duration">${this.duration}</span>
           </p>
           <p class="trip-point__price">&euro;&nbsp;${this._price}</p>
           <ul class="trip-point__offers">
@@ -46,6 +49,20 @@ class Point extends EventComponent {
           </ul>
       </article>
     `;
+  }
+
+  get duration() {
+    const timeParts = this._time.split(` to `);
+
+    const dateStart = moment(timeParts[0], `hh.mm`);
+    const dateEnd = moment(timeParts[1], `hh.mm`);
+
+
+    const duration = moment.duration(dateEnd.diff(dateStart));
+    const hours = duration.hours();
+    const minutes = duration.minutes();
+
+    return `${hours}H:${minutes}M`;
   }
 
   bind() {

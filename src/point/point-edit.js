@@ -1,11 +1,13 @@
 import EventComponent from "../components/EventComponent";
 import {createElement} from "../helpers/сreate-element";
+import {tripsPoint} from '../data.js';
 import flatpickr from 'flatpickr';
 import moment from 'moment';
 
 class PointEdit extends EventComponent {
   constructor(data) {
     super();
+    this._token = data.token;
     this._city = data.city;
     this._title = data.title;
     this._picture = data.picture;
@@ -25,8 +27,9 @@ class PointEdit extends EventComponent {
 
     this._onSubmit = null;
     this._onEsc = null;
+    this._onDelete = null;
     this._onSubmitButtonClick = this._onSubmitButtonClick.bind(this);
-    this._onFormReset = this._onFormReset.bind(this);
+    this._onFormDelete = this._onFormDelete.bind(this);
     this._onFavoriteChange = this._onFavoriteChange.bind(this);
     this._onKeyDown = this._onKeyDown.bind(this);
     this._onOfferChange = this._onOfferChange.bind(this);
@@ -39,9 +42,9 @@ class PointEdit extends EventComponent {
       price: this._price,
       city: this._city,
       isFavorite: false,
-      time: `10:00`,
       offers: this._offers,
-      icon: this._icon
+      icon: this._icon,
+      time: this._time
     };
 
     const pointEditMapper = PointEdit.createMapper(entry);
@@ -60,8 +63,8 @@ class PointEdit extends EventComponent {
     this._onEsc = fn;
   }
 
-  set onReset(fn) {
-    this._onReset = fn;
+  set onDelete(fn) {
+    this._onDelete = fn;
   }
 
   _onKeyDown(e) {
@@ -87,10 +90,10 @@ class PointEdit extends EventComponent {
     this.update(newData);
   }
 
-  _onFormReset(evt) {
+  _onFormDelete(evt) {
     evt.preventDefault();
-    if (typeof this._onReset === `function`) {
-      this._onReset(); // TODO: add deleting
+    if (typeof this._onDelete === `function`) {
+      this._onDelete();
     }
   }
 
@@ -160,6 +163,100 @@ class PointEdit extends EventComponent {
     this._onSubmit = fn;
   }
 
+  _createCycleListeners() {
+    const offersInput = this._element.querySelectorAll(`.point__offers-input`);
+    for (let i = 0; i < offersInput.length; i++) {
+      offersInput[i].addEventListener(`change`, this._onOfferChange);
+    }
+
+    const travelSelect = this._element.querySelectorAll(`.travel-way__select-input`);
+    for (let i = 0; i < travelSelect.length; i++) {
+      travelSelect[i].addEventListener(`click`, this._onEventChange);
+    }
+  }
+
+  _removeCycleListeners() {
+    const offersInput = this._element.querySelectorAll(`.point__offers-input`);
+    for (let i = 0; i < offersInput.length; i++) {
+      offersInput[i].removeEventListener(`change`, this._onOfferChange);
+    }
+
+    const travelSelect = this._element.querySelectorAll(`.travel-way__select-input`);
+    for (let i = 0; i < travelSelect.length; i++) {
+      travelSelect[i].removeEventListener(`click`, this._onEventChange);
+    }
+  }
+
+  bind() {
+    const pointInput = this.element.querySelector(`input[name="time"]`);
+
+    this._element.addEventListener(`submit`, this._onSubmitButtonClick);
+
+    document.addEventListener(`keydown`, this._onKeyDown);
+
+    this._element.querySelector(`#favorite`)
+      .addEventListener(`change`, this._onFavoriteChange);
+
+    this._element.querySelector(`form`).addEventListener(`reset`, this._onFormDelete);
+
+    flatpickr(pointInput, {
+      mode: `range`,
+      time24hr: true,
+      enableTime: true,
+      minDate: `2018-03-01`,
+      maxDate: `2018-03-01`,
+      noCalendar: false,
+      altInput: true,
+      altFormat: `H:i`,
+      dateFormat: `H:i`
+    });
+
+    this._createCycleListeners();
+  }
+
+  unbind() {
+    this._element.removeEventListener(`submit`, this._onSubmitButtonClick);
+
+    document.removeEventListener(`keydown`, this._onKeyDown);
+
+    this._element.querySelector(`form`).removeEventListener(`reset`, this._onFormDelete);
+
+    this._element.querySelector(`.point__offers-input`)
+      .removeEventListener(`change`, this._onOfferChange);
+
+    this._removeCycleListeners();
+  }
+
+  update(data) {
+    this._title = data.title;
+    this._city = data.city;
+    this._price = data.price;
+    this._icon = data.icon;
+    this._time = data.time;
+    this._offers = data.offers;
+    this._state.isFavorite = data.isFavorite;
+  }
+
+  static createMapper(target) {
+    return {
+      price: (value) => {
+        target.price = value;
+      },
+      destination: (value) => {
+        target.city = value;
+      },
+      favorite: () => {
+        target.isFavorite = true;
+      },
+      time: (value) => {
+        target.time = value;
+      },
+      icon: (value) => {
+        target.icon = value;
+      }
+    };
+  }
+
   get template() {
     return `
         <article class="point">
@@ -214,7 +311,7 @@ class PointEdit extends EventComponent {
         
               <label class="point__time">
                 choose time
-                <input class="point__input" type="text" value="" name="time" placeholder="00:00 — 00:00">
+                <input class="point__input" type="text" value="${this._time}" name="time" placeholder="00:00 — 00:00">
               </label>
         
               <label class="point__price">
@@ -270,90 +367,6 @@ class PointEdit extends EventComponent {
               </section>
             </form>
           </article>`;
-  }
-
-  _createCycleListeners() {
-    const offersInput = this._element.querySelectorAll(`.point__offers-input`);
-    for (let i = 0; i < offersInput.length; i++) {
-      offersInput[i].addEventListener(`change`, this._onOfferChange);
-    }
-
-    const travelSelect = this._element.querySelectorAll(`.travel-way__select-input`);
-    for (let i = 0; i < travelSelect.length; i++) {
-      travelSelect[i].addEventListener(`click`, this._onEventChange);
-    }
-  }
-
-  _removeCycleListeners() {
-    const offersInput = this._element.querySelectorAll(`.point__offers-input`);
-    for (let i = 0; i < offersInput.length; i++) {
-      offersInput[i].removeEventListener(`change`, this._onOfferChange);
-    }
-
-    const travelSelect = this._element.querySelectorAll(`.travel-way__select-input`);
-    for (let i = 0; i < travelSelect.length; i++) {
-      travelSelect[i].removeEventListener(`click`, this._onEventChange);
-    }
-  }
-
-  bind() {
-    const pointInput = this.element.querySelector(`input[name="time"]`);
-
-    this._element.addEventListener(`submit`, this._onSubmitButtonClick);
-
-    document.addEventListener(`keydown`, this._onKeyDown);
-
-    this._element.querySelector(`#favorite`)
-      .addEventListener(`change`, this._onFavoriteChange);
-
-    this._element.querySelector(`form`).addEventListener(`reset`, this._onFormReset);
-
-    flatpickr(pointInput, {mode: `multiple`, conjunction: ` - `, enableTime: true, noCalendar: false, altInput: true, altFormat: `H:i`, dateFormat: `H:i`});
-
-    this._createCycleListeners();
-  }
-
-  unbind() {
-    this._element.removeEventListener(`submit`, this._onSubmitButtonClick);
-
-    document.removeEventListener(`keydown`, this._onKeyDown);
-
-    this._element.querySelector(`form`).removeEventListener(`reset`, this._onFormReset);
-
-    this._element.querySelector(`.point__offers-input`)
-      .removeEventListener(`change`, this._onOfferChange);
-
-    this._removeCycleListeners();
-  }
-
-  update(data) {
-    this._title = data.title;
-    this._city = data.city;
-    this._price = data.price;
-    this._icon = data.icon;
-    this._time = data.time;
-    this._offers = data.offers;
-    this._state.isFavorite = data.isFavorite;
-  }
-
-  static createMapper(target) {
-    return {
-      price: (value) => {
-        target.price = value;
-      },
-      destination: (value) => {
-        target.city = value;
-      },
-      favorite: () => {
-        target.isFavorite = true;
-      },
-      time: (value) => {
-        target.time = value;
-      },
-      icon: (value) => {
-        target.icon = value;
-      }
-    };
   }
 }
 

@@ -97,13 +97,14 @@ const eventData = {
     shuffleArray(descriptions);
     return descriptions.join(` `);
   },
-  time: `12:00`,
+  time: `12:00 to 14:00`,
 };
 
 const generateData = () => {
-  const trips = {};
+  const trips = [];
   for (const el of timesFilter) {
-    trips[`${el.id}`] = createPointData(el.count, eventData);
+    let element = createPointData(el.count, eventData);
+    trips.push(element);
   }
   return trips;
 };

@@ -27,6 +27,19 @@ const createAllFilters = (array) => {
   }
 };
 
+const filterTasks = (tasks, filterName) => {
+  switch (filterName) {
+    case `everything`:
+      return tasks;
+
+    case `future`:
+      return tasks.filter((it) => it.dueDate > Date.now());
+
+    case `past`:
+      return tasks.filter((it) => it.dueDate < Date.now());
+  }
+};
+
 createAllFilters(timesFilter);
 
 const clearBlock = (block) => {
@@ -34,6 +47,7 @@ const clearBlock = (block) => {
 };
 
 const filterRadio = document.getElementsByName(`filter`);
+const filterForm = document.querySelector(`.trip-filter`);
 
 const createEventElement = (parent, data) => {
   const point = new Point(data);
@@ -41,6 +55,7 @@ const createEventElement = (parent, data) => {
   point.onClick = () => {
     editPoint.render();
     tripDay.replaceChild(editPoint.element, point.element);
+    document.querySelector(`.flatpickr-input.form-control`).value = data.time;
     point.unrender();
   };
 
@@ -67,13 +82,18 @@ const createEventElement = (parent, data) => {
     editPoint.unrender();
   };
 
-  editPoint.onReset = () => {
-    point.render();
-    tripDay.replaceChild(point.element, editPoint.element);
+  editPoint.onDelete = () => {
+    tripDay.removeChild(editPoint.element);
+    deleteTask(editPoint);
     editPoint.unrender();
   };
 
   addEvent(parent, point);
+};
+
+const deleteTask = (task) => {
+  const index = tripsPoint.findIndex((el) => el._token === task._token);
+  tripsPoint[index] = null;
 };
 
 const createAllEvents = (array) => {
@@ -92,12 +112,11 @@ const renderPoints = (target, data) => {
   createAllEvents(data[`${filter}`]);
 };
 
-for (const el of filterRadio) {
-  el.addEventListener(`change`, function (evt) {
-    const target = evt.target;
-    clearBlock(tripDay);
-    renderPoints(target, tripsPoint);
-  });
-}
+filterForm.addEventListener(`change`, function (evt) {
+  const filterName = evt.target.value;
+  const filteredTasks = filterTasks(tripsPoint, filterName);
+  clearBlock(tripDay);
+  renderPoints(filteredTasks, tripsPoint);
+});
 
 createAllEvents(startFilter);
