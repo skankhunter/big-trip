@@ -1,12 +1,12 @@
 import filterRender from './rendering/make-filter.js';
-import {timesFilter, tripsPoint} from './data.js';
+import {timesFilter, tripsPoints} from './data.js';
 import Point from "./point/point";
 import PointEdit from "./point/point-edit";
 
 const tripForm = document.querySelector(`.trip-filter`);
 const tripDay = document.querySelector(`.trip-day__items`);
 
-const startFilter = tripsPoint.everything;
+const startFilter = tripsPoints;
 
 const addElement = (parent, currentElement) => {
   parent.insertAdjacentHTML(`beforeEnd`, currentElement);
@@ -33,10 +33,10 @@ const filterTasks = (tasks, filterName) => {
       return tasks;
 
     case `future`:
-      return tasks.filter((it) => it.dueDate > Date.now());
+      return tasks.filter((it) => it.date > Date.now());
 
     case `past`:
-      return tasks.filter((it) => it.dueDate < Date.now());
+      return tasks.filter((it) => it.date < Date.now());
   }
 };
 
@@ -46,7 +46,6 @@ const clearBlock = (block) => {
   block.innerHTML = ``;
 };
 
-const filterRadio = document.getElementsByName(`filter`);
 const filterForm = document.querySelector(`.trip-filter`);
 
 const createEventElement = (parent, data) => {
@@ -83,8 +82,8 @@ const createEventElement = (parent, data) => {
   };
 
   editPoint.onDelete = () => {
-    tripDay.removeChild(editPoint.element);
     deleteTask(editPoint);
+    tripDay.removeChild(editPoint.element);
     editPoint.unrender();
   };
 
@@ -92,8 +91,14 @@ const createEventElement = (parent, data) => {
 };
 
 const deleteTask = (task) => {
-  const index = tripsPoint.findIndex((el) => el._token === task._token);
-  tripsPoint[index] = null;
+  for (let i = 0; i < tripsPoints.length; i++) {
+    if (tripsPoints[i] === null) {
+      continue;
+    } else if (tripsPoints[i].token === task._token) {
+      tripsPoints[i] = null;
+      break;
+    }
+  }
 };
 
 const createAllEvents = (array) => {
@@ -102,21 +107,11 @@ const createAllEvents = (array) => {
   }
 };
 
-const getCurrentFilter = (target) => {
-  const currentId = target.getAttribute(`id`);
-  return currentId.split(`-`)[1];
-};
-
-const renderPoints = (target, data) => {
-  const filter = getCurrentFilter(target);
-  createAllEvents(data[`${filter}`]);
-};
-
 filterForm.addEventListener(`change`, function (evt) {
   const filterName = evt.target.value;
-  const filteredTasks = filterTasks(tripsPoint, filterName);
+  const filteredTasks = filterTasks(tripsPoints, filterName);
   clearBlock(tripDay);
-  renderPoints(filteredTasks, tripsPoint);
+  createAllEvents(filteredTasks);
 });
 
 createAllEvents(startFilter);

@@ -10,7 +10,7 @@ const timesFilter = [
   {
     id: `future`,
     checked: false,
-    disabled: true,
+    disabled: false,
     count: 0
   },
   {
@@ -20,6 +20,8 @@ const timesFilter = [
     count: 10
   }
 ];
+
+const filtersCount = getRandomNum(26);
 
 const eventData = {
   cities: new Set([`Chamonix`, `Karaganda`, `Huevokukuevo`, `Geneva`]),
@@ -101,14 +103,9 @@ const eventData = {
 };
 
 const generateData = () => {
-  const trips = [];
-  for (const el of timesFilter) {
-    let element = createPointData(el.count, eventData);
-    trips.push(element);
-  }
-  return trips;
+  return createPointData(filtersCount, eventData);
 };
 
-const tripsPoint = generateData();
+const tripsPoints = generateData();
 
-export {timesFilter, tripsPoint};
+export {timesFilter, tripsPoints};
