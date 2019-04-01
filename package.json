@@ -21,7 +21,9 @@
   },
   "dependencies": {
     "flatpickr": "^4.5.7",
-    "moment": "^2.24.0"
+    "moment": "^2.24.0",
+    "chart.js": "2.8.0",
+    "chartjs-plugin-datalabels": "0.6.0"
   },
   "engines": {
     "node": "10"

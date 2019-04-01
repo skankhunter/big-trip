@@ -17,6 +17,7 @@ export const createPointData = (count, data) => {
     let tempData = data.getEvent();
     newPoints.push({
       token: generateToken(32),
+      eventType: tempData.eventType,
       city: getRandomElement(data.city),
       title: tempData.title,
       picture: data.picture,

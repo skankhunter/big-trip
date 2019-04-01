@@ -1,6 +1,5 @@
 import EventComponent from "../components/EventComponent";
 import {createElement} from "../helpers/сreate-element";
-import {tripsPoint} from '../data.js';
 import flatpickr from 'flatpickr';
 import moment from 'moment';
 
@@ -8,6 +7,7 @@ class PointEdit extends EventComponent {
   constructor(data) {
     super();
     this._token = data.token;
+    this._eventType = data.eventType;
     this._city = data.city;
     this._title = data.title;
     this._picture = data.picture;
@@ -28,6 +28,7 @@ class PointEdit extends EventComponent {
     this._onSubmit = null;
     this._onEsc = null;
     this._onDelete = null;
+
     this._onSubmitButtonClick = this._onSubmitButtonClick.bind(this);
     this._onFormDelete = this._onFormDelete.bind(this);
     this._onFavoriteChange = this._onFavoriteChange.bind(this);
@@ -153,8 +154,7 @@ class PointEdit extends EventComponent {
 
   _partialUpdate() {
     const currentElement = createElement(this.template);
-    const container = document.createElement(`div`);
-    let fieldContainer = container.innerHTML;
+    let fieldContainer = document.createElement(`div`).innerHTML;
     fieldContainer = currentElement;
     this._element.innerHTML = fieldContainer.firstElementChild.outerHTML;
   }

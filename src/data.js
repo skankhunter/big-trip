@@ -2,26 +2,23 @@ import {getRandomNum, shuffleArray} from './helpers/helpers';
 import {createPointData} from "./helpers/create-point";
 const timesFilter = [
   {
-    id: `everything`,
+    name: `everything`,
     checked: true,
     disabled: false,
-    count: 7
   },
   {
-    id: `future`,
+    name: `future`,
     checked: false,
     disabled: false,
-    count: 0
   },
   {
-    id: `past`,
+    name: `past`,
     checked: false,
     disabled: false,
-    count: 10
   }
 ];
 
-const filtersCount = getRandomNum(26);
+const eventsCount = getRandomNum(26);
 
 const eventData = {
   cities: new Set([`Chamonix`, `Karaganda`, `Huevokukuevo`, `Geneva`]),
@@ -83,9 +80,9 @@ const eventData = {
         case `check-in`:
         case `sightseeing`:
         case `restaurant`:
-          return {title: `${event} into a`, icon: icons[event], offer: this.offers[event]};
+          return {title: `${event} into a`, icon: icons[event], offer: this.offers[event], eventType: event};
         default:
-          return {title: `${event} to`, icon: icons[event], offer: this.offers[event]};
+          return {title: `${event} to`, icon: icons[event], offer: this.offers[event], eventType: event};
       }
     }
     return null;
@@ -103,7 +100,7 @@ const eventData = {
 };
 
 const generateData = () => {
-  return createPointData(filtersCount, eventData);
+  return createPointData(eventsCount, eventData);
 };
 
 const tripsPoints = generateData();
