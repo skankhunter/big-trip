@@ -437,6 +437,9 @@ input[type=radio]:checked + .trip-sorting__item {
   color: #999999;
   white-space: nowrap;
 }
+.point__destination-type {
+  text-transform: capitalize;
+}
 .point__destination-input {
   border: 0;
   padding: 0;

@@ -1,6 +1,6 @@
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import {dataChartEventsMoney, dataChartEventsTransport} from './main';
+// import {api} from "./backend-api";
 
 const moneyCtx = document.querySelector(`.statistic__money`);
 const transportCtx = document.querySelector(`.statistic__transport`);
@@ -12,136 +12,215 @@ moneyCtx.height = BAR_HEIGHT * 6;
 transportCtx.height = BAR_HEIGHT * 4;
 timeSpendCtx.height = BAR_HEIGHT * 4;
 
-// const updateData;
+// const moneyChart = new Chart(moneyCtx, createDataChart({
+//     data: {
+//       labels: dataChartEventsMoney.uniqTypes,
+//       datasets: [{
+//         data: dataChartEventsMoney.data,
+//         backgroundColor: `#ffffff`,
+//         hoverBackgroundColor: `#ffffff`,
+//         anchor: `start`
+//       }]
+//     }
+//   }, `MONEY`)
+// );
 
-const moneyChart = new Chart(moneyCtx, {
-  plugins: [ChartDataLabels],
-  type: `horizontalBar`,
-  data: {
-    labels: dataChartEventsMoney.uniqTypes,
-    datasets: [{
-      data: dataChartEventsMoney.data,
-      backgroundColor: `#ffffff`,
-      hoverBackgroundColor: `#ffffff`,
-      anchor: `start`
-    }]
-  },
-  options: {
-    plugins: {
-      datalabels: {
-        font: {
-          size: 13
-        },
-        color: `#000000`,
-        anchor: `end`,
-        align: `start`,
-        formatter: (val) => `€ ${val}`
-      }
-    },
-    title: {
-      display: true,
-      text: `MONEY`,
-      fontColor: `#000000`,
-      fontSize: 23,
-      position: `left`
-    },
-    scales: {
-      yAxes: [{
-        ticks: {
-          fontColor: `#000000`,
-          padding: 5,
-          fontSize: 13,
-        },
-        gridLines: {
-          display: false,
-          drawBorder: false
-        },
-        barThickness: 44,
-      }],
-      xAxes: [{
-        ticks: {
-          display: false,
-          beginAtZero: true,
-        },
-        gridLines: {
-          display: false,
-          drawBorder: false
-        },
-        minBarLength: 50
-      }],
-    },
-    legend: {
-      display: false
-    },
-    tooltips: {
-      enabled: false,
+let moneyChart;
+let transportChart;
+
+// const transportChart = new Chart(transportCtx, createDataChart({
+//     data: {
+//       labels: dataChartEventsTransport.transportTypes,
+//       datasets: [{
+//         data: dataChartEventsTransport.dataTransport,
+//         backgroundColor: `#ffffff`,
+//         hoverBackgroundColor: `#ffffff`,
+//         anchor: `start`
+//       }]
+//     }
+//   }, `TRANSPORT`)
+// );
+
+const updateCharts = (points) => {
+  let convertedPoints = [];
+  points.forEach((point) => {
+    convertedPoints.push(point[0]);
+  });
+
+  const dataChartEventsMoney = getEventsMoney(convertedPoints);
+  const dataChartEventsTransport = getEventsTransport(convertedPoints);
+
+  // moneyChart.data.datasets[0].data = dataChartEventsMoney.data;
+  // transportChart.data.datasets[0].data = dataChartEventsTransport.dataTransport;
+  //
+  // moneyChart.data.labels = dataChartEventsMoney.uniqTypes;
+  // transportChart.data.labels = transportChart.transportTypes;
+
+  moneyChart = new Chart(moneyCtx, createDataChart({
+    data: {
+      labels: dataChartEventsMoney.uniqTypes,
+      datasets: [{
+        data: dataChartEventsMoney.data,
+        backgroundColor: `#ffffff`,
+        hoverBackgroundColor: `#ffffff`,
+        anchor: `start`
+      }]
+    }
+  }, `MONEY`)
+  );
+  transportChart = new Chart(transportCtx, createDataChart({
+    data: {
+      labels: dataChartEventsTransport.transportTypes,
+      datasets: [{
+        data: dataChartEventsTransport.dataTransport,
+        backgroundColor: `#ffffff`,
+        hoverBackgroundColor: `#ffffff`,
+        anchor: `start`
+      }]
+    }
+  }, `TRANSPORT`)
+  );
+};
+
+function getEventsMoney(points) {
+  const types = {};
+  const data = [];
+
+  for (let event of points) {
+    const prop = `${event.typeIcon} ${event.type.toUpperCase()}`;
+    if (!types.hasOwnProperty(prop)) {
+      types[prop] = event.price;
+    } else {
+      types[prop] += event.price;
     }
   }
-});
 
-const transportChart = new Chart(transportCtx, {
-  plugins: [ChartDataLabels],
-  type: `horizontalBar`,
-  data: {
-    labels: [`🚗 DRIVE`, `🚕 RIDE`, `✈️ FLY`, `🛳️ SAIL`],
-    datasets: [{
-      data: [4, 3, 2, 1],
-      backgroundColor: `#ffffff`,
-      hoverBackgroundColor: `#ffffff`,
-      anchor: `start`
-    }]
-  },
-  options: {
-    plugins: {
-      datalabels: {
-        font: {
-          size: 13
-        },
-        color: `#000000`,
-        anchor: `end`,
-        align: `start`,
-        formatter: (val) => `${val}x`
-      }
-    },
-    title: {
-      display: true,
-      text: `TRANSPORT`,
-      fontColor: `#000000`,
-      fontSize: 23,
-      position: `left`
-    },
-    scales: {
-      yAxes: [{
-        ticks: {
-          fontColor: `#000000`,
-          padding: 5,
-          fontSize: 13,
-        },
-        gridLines: {
-          display: false,
-          drawBorder: false
-        },
-        barThickness: 44,
-      }],
-      xAxes: [{
-        ticks: {
-          display: false,
-          beginAtZero: true,
-        },
-        gridLines: {
-          display: false,
-          drawBorder: false
-        },
-        minBarLength: 50
-      }],
-    },
-    legend: {
-      display: false
-    },
-    tooltips: {
-      enabled: false,
+  for (let prop in types) {
+    data.push(types[prop]);
+  }
+
+  return {
+    uniqTypes: Object.keys(types),
+    data
+  };
+}
+
+function getEventsTransport(points) {
+  const transportTypes = {};
+  const otherTypes = {};
+  const dataTransport = [];
+  const dataOther = [];
+
+  function updateTypes(obj, prop1, prop2) {
+    const prop = `${prop1} ${prop2.toUpperCase()}`;
+    if (!obj.hasOwnProperty(prop)) {
+      obj[prop] = 1;
+    } else {
+      obj[prop] += 1;
     }
   }
-});
 
-export {moneyChart, transportChart};
+  function updateData(arr, obj, prop) {
+    prop.toUpperCase();
+    arr.push(obj[prop]);
+  }
+
+  for (let event of points) {
+    switch (event.type.toLowerCase()) {
+      case `check-in`:
+      case `sightseeing`:
+      case `restaurant`:
+        updateTypes(otherTypes, event.typeIcon, event.type);
+        break;
+      default:
+        updateTypes(transportTypes, event.typeIcon, event.type);
+    }
+  }
+
+  for (let prop in transportTypes) {
+    updateData(dataTransport, transportTypes, prop);
+  }
+
+  for (let prop in otherTypes) {
+    updateData(dataOther, otherTypes, prop);
+  }
+
+  return {
+    transportTypes: Object.keys(transportTypes),
+    otherTypes: Object.keys(otherTypes),
+    dataTransport,
+    dataOther
+  };
+}
+
+// const dataChartEventsMoney = {uniqTypes: [], data: []};
+// const dataChartEventsTransport = {transportTypes: [], transportData: []};
+
+const createDataChart = (data, titleText) => {
+  return {
+    plugins: [ChartDataLabels],
+    type: `horizontalBar`,
+    data: {
+      labels: data.data.labels,
+      datasets: [{
+        data: data.data.datasets[0].data,
+        backgroundColor: `#ffffff`,
+        hoverBackgroundColor: `#ffffff`,
+        anchor: `start`
+      }]
+    },
+    options: {
+      plugins: {
+        datalabels: {
+          font: {
+            size: 13
+          },
+          color: `#000000`,
+          anchor: `end`,
+          align: `start`,
+          formatter: (val) => `€ ${val}`
+        }
+      },
+      title: {
+        display: true,
+        text: titleText,
+        fontColor: `#000000`,
+        fontSize: 23,
+        position: `left`
+      },
+      scales: {
+        yAxes: [{
+          ticks: {
+            fontColor: `#000000`,
+            padding: 5,
+            fontSize: 13,
+          },
+          gridLines: {
+            display: false,
+            drawBorder: false
+          },
+          barThickness: 44,
+        }],
+        xAxes: [{
+          ticks: {
+            display: false,
+            beginAtZero: true,
+          },
+          gridLines: {
+            display: false,
+            drawBorder: false
+          },
+          minBarLength: 50
+        }],
+      },
+      legend: {
+        display: false
+      },
+      tooltips: {
+        enabled: false,
+      }
+    }
+  };
+};
+
+export {updateCharts};

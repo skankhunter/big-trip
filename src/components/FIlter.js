@@ -4,6 +4,7 @@ class Filter extends component {
   constructor(data) {
     super();
     this._name = data.name;
+    this._id = data.id;
     this._isChecked = data.checked;
     this._isDisabled = data.disabled;
 

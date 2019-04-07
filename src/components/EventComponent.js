@@ -1,4 +1,4 @@
-import {createElement} from "../helpers/сreate-element";
+import {createElement} from "../helpers/create-element";
 
 class EventComponent {
   constructor() {
