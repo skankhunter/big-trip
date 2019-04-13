@@ -7,6 +7,7 @@ import moment from "moment";
 
 const tripPoints = document.querySelector(`.trip-points`);
 const mainFilter = document.querySelector(`.trip-filter`);
+const totalCost = document.querySelector(`.trip__total-cost`);
 
 const pointsContainer = document.querySelector(`.main`);
 const statisticContainer = document.querySelector(`.statistic`);
@@ -94,8 +95,25 @@ const renderPoints = (data) => {
           renderPoints(pointsByDay);
         });
     };
+
+    day.onSubmit = () => {
+      api.getPoints()
+        .then((remainPoints) => {
+          calculatingTotalPrice(remainPoints);
+        });
+    };
   });
+  // calculatingTotalPrice(pointsByDay);
 };
+
+function calculatingTotalPrice(dayPoints) {
+  let result = 0;
+  for (const day of dayPoints) {
+    result += Number(day.price);
+  }
+
+  totalCost.textContent = `€ ${result}`;
+}
 
 renderFilters(filtersRawData);
 
@@ -111,6 +129,7 @@ Promise.all([api.getPoints(), api.getDestinations(), api.getOffers()])
     PointEdit.setAllOffers(offers);
     sortPointsByDay(pointsData);
     renderPoints(pointsByDay);
+    calculatingTotalPrice(pointsData);
   })
   .catch(() => {
     msg.innerHTML = `Something went wrong while loading your route info. Check your connection or try again later`;

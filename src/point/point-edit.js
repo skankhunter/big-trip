@@ -114,7 +114,7 @@ class PointEdit extends EventComponent {
   _onCheckedChange(e) {
     for (let offer of this._offers) {
       if (e.target.id === offer.title.split(` `).join(`-`).toLocaleLowerCase()) {
-        offer.checked = e.currentTarget.checked;
+        offer.accepted = e.currentTarget.checked;
       }
     }
   }
@@ -128,7 +128,11 @@ class PointEdit extends EventComponent {
 
     this._type = typeName;
     this._typeIcon = types[typeName];
-    this._price = this._startPrice;
+    for (const offer of this._offers) {
+      if (offer.accepted) {
+        this._price -= offer.price;
+      }
+    }
 
     PointEdit._allOffersData.forEach((offersByType) => {
       if (offersByType.type === typeName) {
@@ -404,7 +408,7 @@ class PointEdit extends EventComponent {
                                  type="checkbox" 
                                  id="${offer.title.split(` `).join(`-`).toLocaleLowerCase()}" 
                                  name="offer" 
-                                 value="${offer.price}" ${offer.checked ? `checked` : ``}
+                                 value="${offer.price}" ${offer.accepted ? `checked` : ``}
                                   >
                           <label for="${offer.title.split(` `).join(`-`).toLocaleLowerCase()}" class="point__offers-label">
                             <span class="point__offer-service">${offer.title}</span> + €<span class="point__offer-price">${offer.price}</span>

@@ -13,6 +13,7 @@ class TripDay {
     this._recentlyDeletedId = null;
     this._element = null;
     this._onDelete = null;
+    this._onSubmit = null;
   }
 
   _createElement(template) {
@@ -76,6 +77,7 @@ class TripDay {
             point.render();
             this._dayElements.replaceChild(point.element, pointEdit.element);
             pointEdit.unrender();
+            this._onSubmit();
           })
           .catch(() => {
             pointEdit.shake();
@@ -132,6 +134,10 @@ class TripDay {
 
   set onDelete(fn) {
     this._onDelete = fn;
+  }
+
+  set onSubmit(fn) {
+    this._onSubmit = fn;
   }
 
   get element() {

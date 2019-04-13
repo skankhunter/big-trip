@@ -1,6 +1,5 @@
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-// import {api} from "./backend-api";
 
 const moneyCtx = document.querySelector(`.statistic__money`);
 const transportCtx = document.querySelector(`.statistic__transport`);
@@ -12,49 +11,17 @@ moneyCtx.height = BAR_HEIGHT * 6;
 transportCtx.height = BAR_HEIGHT * 4;
 timeSpendCtx.height = BAR_HEIGHT * 4;
 
-// const moneyChart = new Chart(moneyCtx, createDataChart({
-//     data: {
-//       labels: dataChartEventsMoney.uniqTypes,
-//       datasets: [{
-//         data: dataChartEventsMoney.data,
-//         backgroundColor: `#ffffff`,
-//         hoverBackgroundColor: `#ffffff`,
-//         anchor: `start`
-//       }]
-//     }
-//   }, `MONEY`)
-// );
-
 let moneyChart;
 let transportChart;
-
-// const transportChart = new Chart(transportCtx, createDataChart({
-//     data: {
-//       labels: dataChartEventsTransport.transportTypes,
-//       datasets: [{
-//         data: dataChartEventsTransport.dataTransport,
-//         backgroundColor: `#ffffff`,
-//         hoverBackgroundColor: `#ffffff`,
-//         anchor: `start`
-//       }]
-//     }
-//   }, `TRANSPORT`)
-// );
 
 const updateCharts = (points) => {
   let convertedPoints = [];
   points.forEach((point) => {
-    convertedPoints.push(point[0]);
+    convertedPoints.push(...point);
   });
 
   const dataChartEventsMoney = getEventsMoney(convertedPoints);
   const dataChartEventsTransport = getEventsTransport(convertedPoints);
-
-  // moneyChart.data.datasets[0].data = dataChartEventsMoney.data;
-  // transportChart.data.datasets[0].data = dataChartEventsTransport.dataTransport;
-  //
-  // moneyChart.data.labels = dataChartEventsMoney.uniqTypes;
-  // transportChart.data.labels = transportChart.transportTypes;
 
   moneyChart = new Chart(moneyCtx, createDataChart({
     data: {
@@ -66,7 +33,7 @@ const updateCharts = (points) => {
         anchor: `start`
       }]
     }
-  }, `MONEY`)
+  }, `MONEY`, `€`)
   );
   transportChart = new Chart(transportCtx, createDataChart({
     data: {
@@ -77,8 +44,8 @@ const updateCharts = (points) => {
         hoverBackgroundColor: `#ffffff`,
         anchor: `start`
       }]
-    }
-  }, `TRANSPORT`)
+    },
+  }, `TRANSPORT`, `X`)
   );
 };
 
@@ -153,10 +120,7 @@ function getEventsTransport(points) {
   };
 }
 
-// const dataChartEventsMoney = {uniqTypes: [], data: []};
-// const dataChartEventsTransport = {transportTypes: [], transportData: []};
-
-const createDataChart = (data, titleText) => {
+const createDataChart = (data, titleText, symbol) => {
   return {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
@@ -178,7 +142,7 @@ const createDataChart = (data, titleText) => {
           color: `#000000`,
           anchor: `end`,
           align: `start`,
-          formatter: (val) => `€ ${val}`
+          formatter: (val) => `${symbol} ${val}`
         }
       },
       title: {
