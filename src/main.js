@@ -4,6 +4,7 @@ import PointEdit from "./point/point-edit";
 import {updateCharts} from "./statistic";
 import {api} from './backend-api';
 import moment from "moment";
+import Sorting from "./components/Sorting";
 
 const tripPoints = document.querySelector(`.trip-points`);
 const mainFilter = document.querySelector(`.trip-filter`);
@@ -14,6 +15,9 @@ const statisticContainer = document.querySelector(`.statistic`);
 
 const tableButton = document.querySelector(`.view-switch__item:nth-child(1)`);
 const statsButton = document.querySelector(`.view-switch__item:nth-child(2)`);
+
+const mainSorting = document.querySelector(`.trip-sorting`);
+const offersBlock = document.querySelector(`.trip-sorting__item--offers`);
 
 const changeView = (evt) => {
   evt.preventDefault();
@@ -33,9 +37,9 @@ tableButton.addEventListener(`click`, (evt) => {
 });
 
 const filtersRawData = [
-  {name: `everything`, id: `filter-everything`, isChecked: true},
-  {name: `future`, id: `filter-future`, isChecked: false},
-  {name: `past`, id: `filter-past`, isChecked: false},
+  {name: `everything`, id: `filter-everything`, checked: true},
+  {name: `future`, id: `filter-future`, checked: false},
+  {name: `past`, id: `filter-past`, checked: false},
 ];
 
 let pointsByDay = new Map();
@@ -50,6 +54,44 @@ const sortPointsByDay = (data) => {
     }
   }
   pointsByDay = new Map([...pointsByDay.entries()].sort());
+};
+
+const sortingRawData = [
+  {name: `event`, id: `sorting-event`, checked: true},
+  {name: `time`, id: `sorting-time`, checked: false},
+  {name: `price`, id: `sorting-price`, checked: false},
+];
+
+function renderSorting(sortingData) {
+  sortingData.forEach((rawSorting) => {
+    let sorting = new Sorting(rawSorting);
+    mainSorting.insertBefore(sorting.render(), offersBlock);
+
+    sorting.onSorting = () => {
+      const sortingName = sorting._id;
+
+      // api.getPoints()
+      //   .then((allPoints) => {
+      //     const sortedPoints = sortingPoints(allPoints, sortingName);
+      //     tripPoints.innerHTML = ``;
+      //     renderPoints(sortedPoints);
+      //   });
+    };
+  });
+}
+
+renderSorting(sortingRawData);
+
+const sortingPoints = (data, sortingName) => {
+  switch (sortingName) {
+    case `sorting-event`:
+      return sortPointsByDay(data);
+    case `sorting-time`:
+      return data.filter((it) => moment(it.date) > moment());
+    case `sorting-price`:
+      return data.filter((it) => moment(it.date) < moment());
+  }
+  return data;
 };
 
 const filterPoints = (data, filterName) => {
@@ -103,7 +145,6 @@ const renderPoints = (data) => {
         });
     };
   });
-  // calculatingTotalPrice(pointsByDay);
 };
 
 function calculatingTotalPrice(dayPoints) {

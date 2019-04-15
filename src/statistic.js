@@ -56,9 +56,9 @@ function getEventsMoney(points) {
   for (let event of points) {
     const prop = `${event.typeIcon} ${event.type.toUpperCase()}`;
     if (!types.hasOwnProperty(prop)) {
-      types[prop] = event.price;
+      types[prop] = Number(event.price);
     } else {
-      types[prop] += event.price;
+      types[prop] += Number(event.price);
     }
   }
 

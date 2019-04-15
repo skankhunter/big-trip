@@ -91,7 +91,7 @@ class TripDay {
         point.price = initialObject.price;
         pointEdit.update(pointData);
         point.render();
-        tripDay.replaceChild(point.element, pointEdit.element);
+        this._dayElements.replaceChild(point.element, pointEdit.element);
         pointEdit.unrender();
       };
 
