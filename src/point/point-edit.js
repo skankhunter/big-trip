@@ -1,7 +1,7 @@
 import EventComponent from "../components/EventComponent";
 import {createElement} from "../helpers/create-element";
 import flatpickr from 'flatpickr';
-import {getTime, types} from "../helpers/helpers";
+import {getTime, getDuration, types} from "../helpers/helpers";
 
 class PointEdit extends EventComponent {
   constructor(data) {
@@ -17,6 +17,7 @@ class PointEdit extends EventComponent {
     this._description = data.description;
     this._date = data.dueData;
     this._time = data.time;
+    this._duration = getDuration(this._date, this._dateDue);
     this._startPrice = data.price;
 
     this._isFavorite = false;
@@ -67,7 +68,7 @@ class PointEdit extends EventComponent {
     entry.picture = this._picture;
     entry.isFavorite = this._isFavorite;
     entry.date = this._date;
-    entry.dateDue = this._dateDue;
+    // entry.dateDue = this._dateDue;
 
     return entry;
   }
@@ -268,9 +269,6 @@ class PointEdit extends EventComponent {
     document.removeEventListener(`keydown`, this._onKeyDown);
 
     this._element.querySelector(`form`).removeEventListener(`reset`, this._onFormDelete);
-
-    this._element.querySelector(`.point__offers-input`)
-      .removeEventListener(`change`, this._onOfferChange);
 
     this._element.querySelector(`.point__destination-input`)
       .removeEventListener(`change`, this._onChangeDestination);

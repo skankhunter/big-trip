@@ -15,6 +15,7 @@ class ModelPoint {
     this.dateDue = new Date(data[`date_to`]);
     this.time = this._getTime(this.date, this.dateDue);
     this.isFavorite = Boolean(data[`is_favorite`]);
+    this.duration = this._getDuration(this.date, this.dateDue);
   }
 
   toRAW() {
@@ -122,6 +123,10 @@ class ModelPoint {
       due: dueHours + `:` + dueMinutes,
       duration: diffHrs + `H ` + diffMins
     };
+  }
+
+  _getDuration(date, dateDue) {
+    return dateDue - date;
   }
 
   static parsePoint(data) {

@@ -15,7 +15,7 @@ let moneyChart;
 let transportChart;
 
 const updateCharts = (points) => {
-  let convertedPoints = [];
+  const convertedPoints = [];
   points.forEach((point) => {
     convertedPoints.push(...point);
   });

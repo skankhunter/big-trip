@@ -46,6 +46,10 @@ const getTime = (date, dateDue) => {
   };
 };
 
+const getDuration = (date, dateDue) => {
+  return dateDue - date;
+};
+
 const types = {
   'taxi': `🚕`,
   'bus': `🚌`,
@@ -58,4 +62,4 @@ const types = {
   'sightseeing': `🏛`,
   // 'Restaurant': `🍴`,
 };
-export {getRandomElement, getRandomNum, shuffleArray, getTime, types};
+export {getRandomElement, getRandomNum, shuffleArray, getTime, getDuration,types};
