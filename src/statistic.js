@@ -9,10 +9,11 @@ const timeSpendCtx = document.querySelector(`.statistic__time-spend`);
 const BAR_HEIGHT = 55;
 moneyCtx.height = BAR_HEIGHT * 6;
 transportCtx.height = BAR_HEIGHT * 4;
-timeSpendCtx.height = BAR_HEIGHT * 4;
+timeSpendCtx.height = BAR_HEIGHT * 5;
 
 let moneyChart;
 let transportChart;
+let timeSpendChart;
 
 const updateCharts = (points) => {
   const convertedPoints = [];
@@ -22,6 +23,13 @@ const updateCharts = (points) => {
 
   const dataChartEventsMoney = getEventsMoney(convertedPoints);
   const dataChartEventsTransport = getEventsTransport(convertedPoints);
+  const dataChartEventsTimeSpend = getEventsTimeSpend(convertedPoints);
+
+  if (moneyChart && transportChart && timeSpendChart) {
+    moneyChart.destroy();
+    transportChart.destroy();
+    timeSpendChart.destroy();
+  }
 
   moneyChart = new Chart(moneyCtx, createDataChart({
     data: {
@@ -35,6 +43,7 @@ const updateCharts = (points) => {
     }
   }, `MONEY`, `€`)
   );
+
   transportChart = new Chart(transportCtx, createDataChart({
     data: {
       labels: dataChartEventsTransport.transportTypes,
@@ -46,6 +55,19 @@ const updateCharts = (points) => {
       }]
     },
   }, `TRANSPORT`, `X`)
+  );
+
+  timeSpendChart = new Chart(timeSpendCtx, createDataChart({
+    data: {
+      labels: dataChartEventsTimeSpend.uniqTypes,
+      datasets: [{
+        data: dataChartEventsTimeSpend.data,
+        backgroundColor: `#ffffff`,
+        hoverBackgroundColor: `#ffffff`,
+        anchor: `start`
+      }]
+    },
+  }, `TIME SPENT`, ``)
   );
 };
 
@@ -59,6 +81,30 @@ function getEventsMoney(points) {
       types[prop] = Number(event.price);
     } else {
       types[prop] += Number(event.price);
+    }
+  }
+
+  for (let prop in types) {
+    data.push(types[prop]);
+  }
+
+  return {
+    uniqTypes: Object.keys(types),
+    data
+  };
+}
+
+function getEventsTimeSpend(points) {
+  const types = {};
+  const data = [];
+
+  for (let event of points) {
+    const prop = `${event.typeIcon} TO ${event.type.toUpperCase()}`;
+    const hours = Math.floor(event.duration / 3600000);
+    if (!types.hasOwnProperty(prop)) {
+      types[prop] = Number(hours);
+    } else {
+      types[prop] += Number(hours);
     }
   }
 

@@ -15,7 +15,10 @@ class PointEdit extends EventComponent {
     this._offers = data.offers;
     this._typeIcon = data.typeIcon;
     this._description = data.description;
-    this._date = data.dueData;
+    this._day = data.day;
+    this._month = data.month;
+    this._date = data.date;
+    this._dateDue = data.dateDue;
     this._time = data.time;
     this._duration = getDuration(this._date, this._dateDue);
     this._startPrice = data.price;
@@ -68,9 +71,29 @@ class PointEdit extends EventComponent {
     entry.picture = this._picture;
     entry.isFavorite = this._isFavorite;
     entry.date = this._date;
-    // entry.dateDue = this._dateDue;
+    entry.dateDue = this._dateDue;
 
     return entry;
+  }
+
+  static createMapper(target) {
+    return {
+      'price': (value) => {
+        target.price = value;
+      },
+      'destination': (value) => {
+        target.city = value;
+      },
+      'favorite': () => {
+        target.isFavorite = true;
+      },
+      'time': (value) => {
+        target.time = value;
+      },
+      'icon': (value) => {
+        target.icon = value;
+      }
+    };
   }
 
   set onEsc(fn) {
@@ -95,7 +118,7 @@ class PointEdit extends EventComponent {
   _onSubmitButtonClick(e) {
     e.preventDefault();
 
-    const formData = new FormData(this._element.querySelector(`.trip-day__items form`));
+    const formData = new FormData(this._element.querySelector(`.point > form`));
     const newData = this._processForm(formData);
 
     if (typeof this._onSubmit === `function`) {
@@ -181,6 +204,8 @@ class PointEdit extends EventComponent {
       this._picture = newDestination.pictures;
       this._partialUpdate();
     }
+
+    this.bind();
   }
 
   _partialUpdate() {
@@ -219,8 +244,8 @@ class PointEdit extends EventComponent {
   }
 
   bind() {
-    const dateStart = this.element.querySelector(`input[name="date-start"]`);
-    const dateEnd = this.element.querySelector(`input[name="date-end"]`);
+    const dateStart = this.element.querySelector(`.point__time input[name="date-start"]`);
+    const dateEnd = this.element.querySelector(`.point__time input[name="date-end"]`);
 
     this._element.addEventListener(`submit`, this._onSubmitButtonClick);
 
@@ -299,26 +324,6 @@ class PointEdit extends EventComponent {
     }, ANIMATION_TIMEOUT);
   }
 
-  static createMapper(target) {
-    return {
-      price: (value) => {
-        target.price = value;
-      },
-      destination: (value) => {
-        target.city = value;
-      },
-      favorite: () => {
-        target.isFavorite = true;
-      },
-      time: (value) => {
-        target.time = value;
-      },
-      icon: (value) => {
-        target.icon = value;
-      }
-    };
-  }
-
   get template() {
     return `
         <article class="point">
@@ -326,7 +331,7 @@ class PointEdit extends EventComponent {
             <header class="point__header">
               <label class="point__date">
                 choose day
-                <input class="point__input" type="text" placeholder="MAR 18" name="day">
+                <input class="point__input" type="text" placeholder="${this.date.month}" value="${this.date.month}" name="day">
               </label>
         
               <div class="travel-way">
@@ -382,7 +387,7 @@ class PointEdit extends EventComponent {
                 <label class="point__price">
                   write price
                   <span class="point__price-currency">€</span>
-                  <input class="point__input" type="text" value="${this._price}" name="price" readonly>
+                  <input class="point__input" type="text" value="${this._price}" name="price">
               </label>
         
               <div class="point__buttons">
@@ -421,8 +426,8 @@ class PointEdit extends EventComponent {
                     ${this._description}
                   </p>
                   <div class="point__destination-images">
-                    <${this._picture.map((pic) =>` <img src="${pic.src}" alt="${pic.description}" class="point__destination-image">`).join(``).trim()}
-                    </div>
+                    ${this._picture.map((pic) =>` <img src="${pic.src}" alt="${pic.description}" class="point__destination-image">`).join(``).trim()}
+                  </div>
                   </section>
                   <input type="hidden" class="point__total-price" name="total-price" value="">
                 </section>

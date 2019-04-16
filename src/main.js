@@ -5,6 +5,7 @@ import {updateCharts} from "./statistic";
 import {api} from './backend-api';
 import moment from "moment";
 import Sorting from "./components/Sorting";
+import ModelPoint from "./components/ModelPoint";
 
 const tripPoints = document.querySelector(`.trip-points`);
 const mainFilter = document.querySelector(`.trip-filter`);
@@ -18,6 +19,8 @@ const statsButton = document.querySelector(`.view-switch__item:nth-child(2)`);
 
 const mainSorting = document.querySelector(`.trip-sorting`);
 const offersBlock = document.querySelector(`.trip-sorting__item--offers`);
+
+const newTask = document.querySelector(`.new-event`);
 
 const changeView = (evt) => {
   evt.preventDefault();
@@ -34,6 +37,55 @@ statsButton.addEventListener(`click`, (evt) => {
 
 tableButton.addEventListener(`click`, (evt) => {
   changeView(evt);
+});
+
+newTask.addEventListener(`click`, () => {
+  const newPoint = {
+    'id': String(Date.now()),
+    'date_from': new Date(),
+    'date_to': new Date(),
+    'destination': {
+      name: ``,
+      description: ``,
+      pictures: []
+    },
+    'base_price': 0,
+    'is_favorite': false,
+    'offers': [],
+    'type': `bus`,
+  };
+
+  const point = new ModelPoint(newPoint);
+  const pointEdit = new PointEdit(point);
+
+  pointEdit.onSubmit = (newObject) => {
+    newPoint.destination = {
+      name: newObject.city,
+      description: newObject.description,
+      pictures: newObject.picture
+    };
+    newPoint.type = newObject.type.toLowerCase();
+    newPoint.offers = newObject.offers;
+    newPoint[`is_favorite`] = newObject.isFavorite;
+    newPoint[`base_price`] = newObject.price;
+    newPoint[`date_from`] = newObject.date.getTime();
+    newPoint[`date_to`] = newObject.dateDue.getTime();
+
+    const obj = ModelPoint.parsePoint(newPoint).toRAW();
+    api.createPoint(obj)
+      .then();
+    api.getPoints()
+      .then((points) => {
+        sortPointsByDay(points);
+        renderPoints(pointsByDay);
+      });
+  };
+  // Мы еще ничего не отправили на сервер, поэтому тут хватит простого анрендера
+  pointEdit.onDelete = () => {
+    pointEdit.unrender();
+  };
+
+  tripPoints.insertBefore(pointEdit.render(), tripPoints.firstChild);
 });
 
 const filtersRawData = [
@@ -80,61 +132,22 @@ renderSorting(sortingRawData);
 const sortingPoints = (data, sortingName) => {
   switch (sortingName) {
     case `sorting-event`:
-      return sortingByEventName(data);
+      return sortingByFilter(data, `type`);
     case `sorting-time`:
-      return sortingByTime(data);
+      return sortingByFilter(data, `duration`);
     case `sorting-price`:
-      return sortingByPrice(data);
+      return sortingByFilter(data, `price`);
   }
 };
 
-function sortingByTime(data) {
+function sortingByFilter(data, property) {
   data.forEach((day) => {
     if (day.length > 1) {
       day.sort(function (a, b) {
-        if (a.duration > b.duration) {
+        if (a[property] > b[property]) {
           return 1;
         }
-        if (a.duration < b.duration) {
-          return -1;
-        }
-        // a должно быть равным b
-        return 0;
-      });
-    }
-  });
-
-  return data;
-}
-
-
-function sortingByEventName(data) {
-  data.forEach((day) => {
-    if (day.length > 1) {
-      day.sort(function (a, b) {
-        if (a.type > b.type) {
-          return 1;
-        }
-        if (a.type < b.type) {
-          return -1;
-        }
-        // a должно быть равным b
-        return 0;
-      });
-    }
-  });
-
-  return data;
-}
-
-function sortingByPrice(data) {
-  data.forEach((day) => {
-    if (day.length > 1) {
-      day.sort(function (a, b) {
-        if (a.price > b.price) {
-          return 1;
-        }
-        if (a.price < b.price) {
+        if (a[property] < b[property]) {
           return -1;
         }
         // a должно быть равным b
@@ -178,6 +191,7 @@ function renderFilters(filtersData) {
 
 
 const renderPoints = (data) => {
+  tripPoints.innerHTML = ``;
   data.forEach((dayPoints) => {
     let day = new TripDay(dayPoints);
     tripPoints.appendChild(day.render());

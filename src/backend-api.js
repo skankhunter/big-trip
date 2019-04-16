@@ -1,6 +1,6 @@
 import ModelPoint from "./components/ModelPoint";
 
-const AUTHORIZATION = `Basic lo0a590ik20501i`;
+const AUTHORIZATION = `Basic lo0a590ik25501i`;
 const END_POINT = `https://es8-demo-srv.appspot.com/big-trip/`;
 
 const Method = {

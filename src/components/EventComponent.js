@@ -29,6 +29,15 @@ class EventComponent {
     this._element = null;
   }
 
+  get date() {
+    return {
+      day: this._day,
+      month: this._month,
+      uniqueDay: this._uniqueDay,
+      time: this._time,
+    };
+  }
+
   bind() {}
 
   unbind() {}
