@@ -21,7 +21,10 @@ class PointEdit extends EventComponent {
     this._dateDue = data.dateDue;
     this._time = data.time;
     this._duration = getDuration(this._date, this._dateDue);
-    this._startPrice = data.price;
+    this._startObject = {
+      price: data.price,
+      offers: data.offers.map((a) => Object.assign({}, a)),
+    };
 
     this._isFavorite = false;
     this._state.checked = false;
@@ -107,11 +110,11 @@ class PointEdit extends EventComponent {
   _onKeyDown(e) {
     const ESC = 27;
     if (e.keyCode === ESC) {
-      const initData = {
-        price: this._startPrice
-      };
 
-      this._onEsc(initData);
+      if (typeof this._onEsc === `function`) {
+        this._onEsc(this._startObject);
+        this._offers = this._startObject.offers.map((a) => Object.assign({}, a));
+      }
     }
   }
 
@@ -161,6 +164,7 @@ class PointEdit extends EventComponent {
     PointEdit._allOffersData.forEach((offersByType) => {
       if (offersByType.type === typeName) {
         this._offers = this._convertOffers(offersByType.offers);
+        this._startObject.offers = this._offers.map((a) => Object.assign({}, a));
       }
     });
 
@@ -246,8 +250,9 @@ class PointEdit extends EventComponent {
   bind() {
     const dateStart = this.element.querySelector(`.point__time input[name="date-start"]`);
     const dateEnd = this.element.querySelector(`.point__time input[name="date-end"]`);
+    const form = this.element.querySelector(`form`);
 
-    this._element.addEventListener(`submit`, this._onSubmitButtonClick);
+    form.addEventListener(`submit`, this._onSubmitButtonClick);
 
     document.addEventListener(`keydown`, this._onKeyDown);
 
@@ -331,7 +336,7 @@ class PointEdit extends EventComponent {
             <header class="point__header">
               <label class="point__date">
                 choose day
-                <input class="point__input" type="text" placeholder="${this.date.month}" value="${this.date.month}" name="day">
+                <input class="point__input" type="text" placeholder="${this.date.day} ${this.date.month}" value="${this.date.day} ${this.date.month}" name="day">
               </label>
         
               <div class="travel-way">

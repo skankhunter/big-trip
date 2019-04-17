@@ -87,8 +87,8 @@ class TripDay {
       };
 
       pointEdit.onEsc = (initialObject) => {
-        const tripDay = document.querySelector(`.trip-day__items`);
-        point.price = initialObject.price;
+        point._price = initialObject.price;
+        point._offers = initialObject.offers;
         pointEdit.update(pointData);
         point.render();
         this._dayElements.replaceChild(point.element, pointEdit.element);
