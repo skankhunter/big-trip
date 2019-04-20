@@ -41,7 +41,7 @@ class ModelPoint {
       `Jul`, `Aug`, `Sep`, `Oct`, `Nov`, `Dec`];
 
     return {
-      tripYear: (`` + date.getFullYear()).substr(-2),
+      tripYear: `` + date.getFullYear(),
       tripMonth: monthNames[date.getMonth()],
       tripDay: date.getDate().toString(),
       uniqueDay: `` + date.getDate() + (date.getMonth() + 1) + date.getFullYear(),

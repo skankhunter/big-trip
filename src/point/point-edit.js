@@ -40,6 +40,7 @@ class PointEdit extends EventComponent {
     this._onOfferChange = this._onOfferChange.bind(this);
     this._onEventChange = this._onEventChange.bind(this);
     this._onChangeDestination = this._onChangeDestination.bind(this);
+    this._onInputsChange = this._onInputsChange.bind(this);
   }
 
   static setDestinations(data) {
@@ -95,6 +96,9 @@ class PointEdit extends EventComponent {
       },
       'icon': (value) => {
         target.icon = value;
+      },
+      'day': (value) => {
+        target.day = value;
       }
     };
   }
@@ -143,6 +147,23 @@ class PointEdit extends EventComponent {
       if (e.target.id === offer.title.split(` `).join(`-`).toLocaleLowerCase()) {
         offer.accepted = e.currentTarget.checked;
       }
+    }
+  }
+
+  _onInputsChange(e) {
+    let currentName = e.target.name;
+    let currentValue = e.target.value;
+
+    switch (currentName) {
+      case `day`:
+        this._day = currentValue.split(` `)[0];
+        this._month = currentValue.split(` `)[1];
+        let year = currentValue.split(` `)[2];
+        this._date = new Date(`${this._day}, ${this._month}, ${year}`);
+        break;
+      case `price`:
+        this._price = currentValue;
+        break;
     }
   }
 
@@ -233,6 +254,11 @@ class PointEdit extends EventComponent {
     for (let i = 0; i < travelSelect.length; i++) {
       travelSelect[i].addEventListener(`click`, this._onEventChange);
     }
+
+    const inputs = this.element.querySelectorAll(`.point__header input[type="text"]`);
+    for (let i = 0; i < inputs.length; i++) {
+      inputs[i].addEventListener(`change`, this._onInputsChange);
+    }
   }
 
   _removeCycleListeners() {
@@ -245,6 +271,11 @@ class PointEdit extends EventComponent {
     for (let i = 0; i < travelSelect.length; i++) {
       travelSelect[i].removeEventListener(`click`, this._onEventChange);
     }
+
+    const inputs = this.element.querySelector(`input[type="text"]`);
+    for (let i = 0; i < inputs.length; i++) {
+      inputs[i].removeEventListener(`change`, this._onInputsChange);
+    }
   }
 
   bind() {
@@ -253,13 +284,12 @@ class PointEdit extends EventComponent {
     const form = this.element.querySelector(`form`);
 
     form.addEventListener(`submit`, this._onSubmitButtonClick);
+    form.addEventListener(`reset`, this._onFormDelete);
 
     document.addEventListener(`keydown`, this._onKeyDown);
 
     this._element.querySelector(`#favorite`)
       .addEventListener(`change`, this._onFavoriteChange);
-
-    this._element.querySelector(`form`).addEventListener(`reset`, this._onFormDelete);
 
     this._element.querySelector(`.point__destination-input`)
       .addEventListener(`change`, this._onChangeDestination);
@@ -392,7 +422,7 @@ class PointEdit extends EventComponent {
                 <label class="point__price">
                   write price
                   <span class="point__price-currency">€</span>
-                  <input class="point__input" type="text" value="${this._price}" name="price">
+                  <input class="point__input" type="text" value="${this._price}" name="price" readonly>
               </label>
         
               <div class="point__buttons">

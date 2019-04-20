@@ -22,6 +22,8 @@ const offersBlock = document.querySelector(`.trip-sorting__item--offers`);
 
 const newTask = document.querySelector(`.new-event`);
 
+let currentFilter;
+
 const changeView = (evt) => {
   evt.preventDefault();
   tableButton.classList.toggle(`view-switch__item--active`);
@@ -32,14 +34,20 @@ const changeView = (evt) => {
 
 statsButton.addEventListener(`click`, (evt) => {
   changeView(evt);
+  newTask.setAttribute(`disabled`, true);
+  newTask.style = `opacity: 0;`;
   updateCharts(pointsByDay);
 });
 
 tableButton.addEventListener(`click`, (evt) => {
+  newTask.removeAttribute(`disabled`);
+  newTask.style = `opacity: 1;`;
   changeView(evt);
 });
 
-newTask.addEventListener(`click`, () => {
+newTask.addEventListener(`click`, (e) => {
+  e.target.setAttribute(`disabled`, true);
+
   const newPoint = {
     'id': String(Date.now()),
     'date_from': new Date(),
@@ -78,15 +86,20 @@ newTask.addEventListener(`click`, () => {
     api.getPoints()
       .then((points) => {
         sortPointsByDay(points);
-        renderPoints(pointsByDay);
+        const sortedPoints = sortingPoints(pointsByDay, currentFilter);
+        renderPoints(sortedPoints);
       });
   };
   // Мы еще ничего не отправили на сервер, поэтому тут хватит простого анрендера
   pointEdit.onDelete = () => {
     pointEdit.unrender();
+    newTask.removeAttribute(`disabled`);
   };
 
   tripPoints.insertBefore(pointEdit.render(), tripPoints.firstChild);
+
+  const priceInput = pointEdit._element.querySelector(`.point__input[name="price"]`);
+  priceInput.removeAttribute(`readonly`);
 });
 
 const filtersRawData = [
@@ -131,6 +144,7 @@ function renderSorting(sortingData) {
 renderSorting(sortingRawData);
 
 const sortingPoints = (data, sortingName) => {
+  currentFilter = sortingName;
   switch (sortingName) {
     case `sorting-event`:
       return sortingByFilter(data, `type`);
@@ -201,7 +215,8 @@ const renderPoints = (data) => {
       api.getPoints()
         .then((remainPoints) => {
           sortPointsByDay(remainPoints);
-          renderPoints(pointsByDay);
+          const sortedPoints = sortingPoints(pointsByDay, currentFilter);
+          renderPoints(sortedPoints);
         });
     };
 
